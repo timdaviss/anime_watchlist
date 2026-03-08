@@ -116,26 +116,55 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     );
                   }
 
-                  return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    itemCount: results.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final result = results[index];
-                      return SearchResultCard(
-                        result: result,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) =>
-                                  AnimeDetailSheet(result: result),
+                  return Column(
+                    children: [
+                      if (notifier.showingCachedResults)
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.systemOrange.withValues(
+                              alpha: 0.15,
                             ),
-                          );
-                        },
-                      );
-                    },
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Text(
+                            'Offline • Showing cached results',
+                            style: TextStyle(
+                              color: CupertinoColors.systemOrange,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      Expanded(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          itemCount: results.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final result = results[index];
+                            return SearchResultCard(
+                              result: result,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    fullscreenDialog: true,
+                                    builder: (context) =>
+                                        AnimeDetailSheet(result: result),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   );
                 },
                 loading: () {

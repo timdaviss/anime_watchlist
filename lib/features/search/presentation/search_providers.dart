@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/providers/core_providers.dart';
@@ -12,8 +15,10 @@ part 'search_providers.g.dart';
 class SearchNotifier extends _$SearchNotifier {
   String _currentQuery = '';
   AnimeSource _selectedSource = AnimeSource.jikan;
+  bool _showingCachedResults = false;
 
   AnimeSource get selectedSource => _selectedSource;
+  bool get showingCachedResults => _showingCachedResults;
 
   @override
   FutureOr<List<AnimeSearchResult>> build() {
@@ -23,6 +28,7 @@ class SearchNotifier extends _$SearchNotifier {
   Future<void> search(String query) async {
     _currentQuery = query;
     if (query.trim().isEmpty) {
+      _showingCachedResults = false;
       state = const AsyncData([]);
       return;
     }
@@ -31,8 +37,44 @@ class SearchNotifier extends _$SearchNotifier {
     try {
       final repository = ref.read(animeSearchRepositoryProvider);
       final results = await repository.search(query, source: _selectedSource);
+      if (query != _currentQuery) {
+        return;
+      }
+
+      _showingCachedResults = false;
       state = AsyncData(results);
+
+      unawaited(
+        ref
+            .read(searchCacheServiceProvider)
+            .cache(query, _selectedSource, results),
+      );
     } catch (e, st) {
+      if (query != _currentQuery) {
+        return;
+      }
+
+      if (!_isNetworkError(e)) {
+        _showingCachedResults = false;
+        state = AsyncError(e, st);
+        return;
+      }
+
+      final cached = await ref
+          .read(searchCacheServiceProvider)
+          .getCached(query, _selectedSource);
+
+      if (query != _currentQuery) {
+        return;
+      }
+
+      if (cached != null) {
+        _showingCachedResults = true;
+        state = AsyncData(cached);
+        return;
+      }
+
+      _showingCachedResults = false;
       state = AsyncError(e, st);
     }
   }
@@ -40,11 +82,29 @@ class SearchNotifier extends _$SearchNotifier {
   void setSource(AnimeSource source) {
     if (_selectedSource == source) return;
     _selectedSource = source;
+    _showingCachedResults = false;
     // Re-emit current state to trigger UI rebuild for segment control
     state = AsyncData(state.value ?? []);
     if (_currentQuery.trim().isNotEmpty) {
       search(_currentQuery);
     }
+  }
+
+  bool _isNetworkError(Object error) {
+    if (error is DioException) {
+      return error.type == DioExceptionType.connectionError ||
+          error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.sendTimeout ||
+          (error.type == DioExceptionType.unknown &&
+              error.error is SocketException);
+    }
+
+    if (error is OperationException) {
+      return error.linkException != null;
+    }
+
+    return error is SocketException;
   }
 }
 
