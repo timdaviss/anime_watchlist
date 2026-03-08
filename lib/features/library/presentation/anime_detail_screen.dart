@@ -26,6 +26,7 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
   late final ScrollController _scrollController;
   final GlobalKey _notesSectionKey = GlobalKey();
   bool _isSynopsisExpanded = false;
+  bool _notesInitialized = false;
 
   @override
   void initState() {
@@ -136,8 +137,11 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
           );
         }
 
-        if (_notesController.text.isEmpty && anime.notes != null) {
+        if (!_notesInitialized && anime.notes != null) {
           _notesController.text = anime.notes!;
+          _notesInitialized = true;
+        } else if (!_notesInitialized) {
+          _notesInitialized = true;
         }
 
         final genres =
