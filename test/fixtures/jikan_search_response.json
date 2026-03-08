@@ -1,0 +1,40 @@
+{
+  "data": [
+    {
+      "mal_id": 5114,
+      "title": "Fullmetal Alchemist: Brotherhood",
+      "title_japanese": "鋼の錬金術師 FULLMETAL ALCHEMIST",
+      "synopsis": "Two brothers search for a Philosopher's Stone.",
+      "images": {
+        "jpg": {
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1208/94745l.jpg"
+        }
+      },
+      "episodes": 64,
+      "genres": [
+        {"name": "Action"},
+        {"name": "Adventure"}
+      ],
+      "score": 9.1,
+      "status": "Finished Airing"
+    },
+    {
+      "mal_id": 9253,
+      "title": "Steins;Gate",
+      "title_japanese": "STEINS;GATE",
+      "synopsis": "A group of friends discover time travel.",
+      "images": {
+        "jpg": {
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1935/127974l.jpg"
+        }
+      },
+      "episodes": 24,
+      "genres": [
+        {"name": "Drama"},
+        {"name": "Sci-Fi"}
+      ],
+      "score": 8.8,
+      "status": "Finished Airing"
+    }
+  ]
+}
