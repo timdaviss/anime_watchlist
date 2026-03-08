@@ -19,6 +19,21 @@ class AnimeRepository {
         .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
   }
 
+  Stream<List<model.AnimeEntry>> watchAllWithSearch(String query) {
+    return _dao
+        .watchAllWithSearch(query)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
+  Stream<List<model.AnimeEntry>> watchByStatusWithSearch(
+    WatchStatus status,
+    String query,
+  ) {
+    return _dao
+        .watchByStatusWithSearch(status, query)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
   Stream<List<model.AnimeEntry>> watchFavorites() {
     return _dao.watchFavorites().map(
       (rows) => rows.map(model.AnimeEntry.fromDbRow).toList(),

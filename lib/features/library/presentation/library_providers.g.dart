@@ -61,6 +61,59 @@ abstract class _$SelectedStatus extends $Notifier<WatchStatus?> {
   }
 }
 
+@ProviderFor(LibrarySearchQuery)
+final librarySearchQueryProvider = LibrarySearchQueryProvider._();
+
+final class LibrarySearchQueryProvider
+    extends $NotifierProvider<LibrarySearchQuery, String> {
+  LibrarySearchQueryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'librarySearchQueryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$librarySearchQueryHash();
+
+  @$internal
+  @override
+  LibrarySearchQuery create() => LibrarySearchQuery();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$librarySearchQueryHash() =>
+    r'578178065e259b6b4779e602ee686320326c3b6c';
+
+abstract class _$LibrarySearchQuery extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(animeList)
 final animeListProvider = AnimeListProvider._();
 
@@ -98,7 +151,7 @@ final class AnimeListProvider
   }
 }
 
-String _$animeListHash() => r'ca9601ca1663ccb3eeb824649577f065993335e4';
+String _$animeListHash() => r'4020f73792a24ff9e6fb62ac07778d94675c64f9';
 
 @ProviderFor(animeDetail)
 final animeDetailProvider = AnimeDetailFamily._();

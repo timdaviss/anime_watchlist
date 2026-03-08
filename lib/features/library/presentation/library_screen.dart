@@ -17,6 +17,7 @@ class LibraryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = ref.watch(selectedStatusProvider);
+    final searchQuery = ref.watch(librarySearchQueryProvider);
     final animeListAsync = ref.watch(animeListProvider);
 
     return CupertinoPageScaffold(
@@ -35,6 +36,18 @@ class LibraryScreen extends ConsumerWidget {
       child: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: CupertinoSearchTextField(
+                placeholder: 'Search library',
+                onChanged: (value) {
+                  ref.read(librarySearchQueryProvider.notifier).setQuery(value);
+                },
+                onSuffixTap: () {
+                  ref.read(librarySearchQueryProvider.notifier).setQuery('');
+                },
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
@@ -58,8 +71,9 @@ class LibraryScreen extends ConsumerWidget {
                   if (animeList.isEmpty) {
                     return EmptyState(
                       icon: CupertinoIcons.book,
-                      message:
-                          'No anime in ${status?.displayName ?? "library"}. Search to add some!',
+                      message: searchQuery.trim().isEmpty
+                          ? 'No anime in ${status?.displayName ?? "library"}. Search to add some!'
+                          : 'No results for "${searchQuery.trim()}" in ${status?.displayName ?? "library"}.',
                     );
                   }
                   return ListView.separated(

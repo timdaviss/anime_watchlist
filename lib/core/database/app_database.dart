@@ -65,6 +65,35 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
         .watch();
   }
 
+  Stream<List<AnimeEntry>> watchAllWithSearch(String query) {
+    if (query.isEmpty) {
+      return watchAll();
+    }
+
+    return (select(animeEntries)
+          ..where((tbl) => tbl.title.like('%$query%'))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)]))
+        .watch();
+  }
+
+  Stream<List<AnimeEntry>> watchByStatusWithSearch(
+    WatchStatus status,
+    String query,
+  ) {
+    if (query.isEmpty) {
+      return watchByStatus(status);
+    }
+
+    return (select(animeEntries)
+          ..where(
+            (tbl) =>
+                tbl.watchStatus.equalsValue(status) &
+                tbl.title.like('%$query%'),
+          )
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)]))
+        .watch();
+  }
+
   Stream<List<AnimeEntry>> watchFavorites() {
     return (select(animeEntries)
           ..where((tbl) => tbl.isFavorite.equals(true))
