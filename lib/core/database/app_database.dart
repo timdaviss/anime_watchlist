@@ -58,11 +58,27 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
     animeEntries,
   )..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)])).watch();
 
+  Stream<List<AnimeEntry>> watchAllSorted(SortOption sort) {
+    final query = select(animeEntries);
+    query.orderBy([_buildOrdering(sort)]);
+    return query.watch();
+  }
+
   Stream<List<AnimeEntry>> watchByStatus(WatchStatus status) {
     return (select(animeEntries)
           ..where((tbl) => tbl.watchStatus.equalsValue(status))
           ..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)]))
         .watch();
+  }
+
+  Stream<List<AnimeEntry>> watchByStatusSorted(
+    WatchStatus status,
+    SortOption sort,
+  ) {
+    final query = select(animeEntries)
+      ..where((tbl) => tbl.watchStatus.equalsValue(status));
+    query.orderBy([_buildOrdering(sort)]);
+    return query.watch();
   }
 
   Stream<List<AnimeEntry>> watchFavorites() {
@@ -141,5 +157,15 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
       counts.update(row.watchStatus, (value) => value + 1, ifAbsent: () => 1);
     }
     return counts;
+  }
+
+  OrderingTerm Function($AnimeEntriesTable) _buildOrdering(SortOption sort) {
+    return switch (sort) {
+      SortOption.updatedAt => (tbl) => OrderingTerm.desc(tbl.updatedAt),
+      SortOption.title => (tbl) => OrderingTerm.asc(tbl.title),
+      SortOption.rating => (tbl) => OrderingTerm.desc(tbl.rating),
+      SortOption.createdAt => (tbl) => OrderingTerm.desc(tbl.createdAt),
+      SortOption.status => (tbl) => OrderingTerm.asc(tbl.watchStatus),
+    };
   }
 }
