@@ -16,6 +16,7 @@ class AnimeEntries extends Table {
   TextColumn get synopsis => text().nullable()();
   TextColumn get coverImageUrl => text().nullable()();
   IntColumn get totalEpisodes => integer().nullable()();
+  IntColumn get episodesWatched => integer().withDefault(const Constant(0))();
   TextColumn get watchStatus => textEnum<WatchStatus>()();
   RealColumn get rating => real().nullable().customConstraint(
     'CHECK (rating IS NULL OR (rating >= 1.0 AND rating <= 10.0))',
@@ -46,7 +47,18 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (migrator, from, to) async {
+        if (from < 2) {
+          await migrator.addColumn(animeEntries, animeEntries.episodesWatched);
+        }
+      },
+    );
+  }
 }
 
 @DriftAccessor(tables: [AnimeEntries])

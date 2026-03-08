@@ -247,6 +247,7 @@ class _AnimeDetailSheetState extends ConsumerState<AnimeDetailSheet> {
       synopsis: result.synopsis,
       coverImageUrl: result.coverImageUrl,
       totalEpisodes: result.totalEpisodes,
+      episodesWatched: 0,
       watchStatus: watchStatus,
       rating: null,
       notes: null,

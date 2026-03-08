@@ -71,6 +71,18 @@ class $AnimeEntriesTable extends AnimeEntries
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _episodesWatchedMeta = const VerificationMeta(
+    'episodesWatched',
+  );
+  @override
+  late final GeneratedColumn<int> episodesWatched = GeneratedColumn<int>(
+    'episodes_watched',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<WatchStatus, String> watchStatus =
       GeneratedColumn<String>(
@@ -183,6 +195,7 @@ class $AnimeEntriesTable extends AnimeEntries
     synopsis,
     coverImageUrl,
     totalEpisodes,
+    episodesWatched,
     watchStatus,
     rating,
     notes,
@@ -249,6 +262,15 @@ class $AnimeEntriesTable extends AnimeEntries
         totalEpisodes.isAcceptableOrUnknown(
           data['total_episodes']!,
           _totalEpisodesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('episodes_watched')) {
+      context.handle(
+        _episodesWatchedMeta,
+        episodesWatched.isAcceptableOrUnknown(
+          data['episodes_watched']!,
+          _episodesWatchedMeta,
         ),
       );
     }
@@ -337,6 +359,10 @@ class $AnimeEntriesTable extends AnimeEntries
         DriftSqlType.int,
         data['${effectivePrefix}total_episodes'],
       ),
+      episodesWatched: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}episodes_watched'],
+      )!,
       watchStatus: $AnimeEntriesTable.$converterwatchStatus.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
@@ -402,6 +428,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
   final String? synopsis;
   final String? coverImageUrl;
   final int? totalEpisodes;
+  final int episodesWatched;
   final WatchStatus watchStatus;
   final double? rating;
   final String? notes;
@@ -419,6 +446,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     this.synopsis,
     this.coverImageUrl,
     this.totalEpisodes,
+    required this.episodesWatched,
     required this.watchStatus,
     this.rating,
     this.notes,
@@ -447,6 +475,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     if (!nullToAbsent || totalEpisodes != null) {
       map['total_episodes'] = Variable<int>(totalEpisodes);
     }
+    map['episodes_watched'] = Variable<int>(episodesWatched);
     {
       map['watch_status'] = Variable<String>(
         $AnimeEntriesTable.$converterwatchStatus.toSql(watchStatus),
@@ -494,6 +523,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       totalEpisodes: totalEpisodes == null && nullToAbsent
           ? const Value.absent()
           : Value(totalEpisodes),
+      episodesWatched: Value(episodesWatched),
       watchStatus: Value(watchStatus),
       rating: rating == null && nullToAbsent
           ? const Value.absent()
@@ -529,6 +559,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       synopsis: serializer.fromJson<String?>(json['synopsis']),
       coverImageUrl: serializer.fromJson<String?>(json['coverImageUrl']),
       totalEpisodes: serializer.fromJson<int?>(json['totalEpisodes']),
+      episodesWatched: serializer.fromJson<int>(json['episodesWatched']),
       watchStatus: $AnimeEntriesTable.$converterwatchStatus.fromJson(
         serializer.fromJson<String>(json['watchStatus']),
       ),
@@ -555,6 +586,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       'synopsis': serializer.toJson<String?>(synopsis),
       'coverImageUrl': serializer.toJson<String?>(coverImageUrl),
       'totalEpisodes': serializer.toJson<int?>(totalEpisodes),
+      'episodesWatched': serializer.toJson<int>(episodesWatched),
       'watchStatus': serializer.toJson<String>(
         $AnimeEntriesTable.$converterwatchStatus.toJson(watchStatus),
       ),
@@ -579,6 +611,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     Value<String?> synopsis = const Value.absent(),
     Value<String?> coverImageUrl = const Value.absent(),
     Value<int?> totalEpisodes = const Value.absent(),
+    int? episodesWatched,
     WatchStatus? watchStatus,
     Value<double?> rating = const Value.absent(),
     Value<String?> notes = const Value.absent(),
@@ -602,6 +635,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     totalEpisodes: totalEpisodes.present
         ? totalEpisodes.value
         : this.totalEpisodes,
+    episodesWatched: episodesWatched ?? this.episodesWatched,
     watchStatus: watchStatus ?? this.watchStatus,
     rating: rating.present ? rating.value : this.rating,
     notes: notes.present ? notes.value : this.notes,
@@ -627,6 +661,9 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       totalEpisodes: data.totalEpisodes.present
           ? data.totalEpisodes.value
           : this.totalEpisodes,
+      episodesWatched: data.episodesWatched.present
+          ? data.episodesWatched.value
+          : this.episodesWatched,
       watchStatus: data.watchStatus.present
           ? data.watchStatus.value
           : this.watchStatus,
@@ -653,6 +690,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
           ..write('synopsis: $synopsis, ')
           ..write('coverImageUrl: $coverImageUrl, ')
           ..write('totalEpisodes: $totalEpisodes, ')
+          ..write('episodesWatched: $episodesWatched, ')
           ..write('watchStatus: $watchStatus, ')
           ..write('rating: $rating, ')
           ..write('notes: $notes, ')
@@ -675,6 +713,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     synopsis,
     coverImageUrl,
     totalEpisodes,
+    episodesWatched,
     watchStatus,
     rating,
     notes,
@@ -696,6 +735,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
           other.synopsis == this.synopsis &&
           other.coverImageUrl == this.coverImageUrl &&
           other.totalEpisodes == this.totalEpisodes &&
+          other.episodesWatched == this.episodesWatched &&
           other.watchStatus == this.watchStatus &&
           other.rating == this.rating &&
           other.notes == this.notes &&
@@ -715,6 +755,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
   final Value<String?> synopsis;
   final Value<String?> coverImageUrl;
   final Value<int?> totalEpisodes;
+  final Value<int> episodesWatched;
   final Value<WatchStatus> watchStatus;
   final Value<double?> rating;
   final Value<String?> notes;
@@ -733,6 +774,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     this.synopsis = const Value.absent(),
     this.coverImageUrl = const Value.absent(),
     this.totalEpisodes = const Value.absent(),
+    this.episodesWatched = const Value.absent(),
     this.watchStatus = const Value.absent(),
     this.rating = const Value.absent(),
     this.notes = const Value.absent(),
@@ -752,6 +794,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     this.synopsis = const Value.absent(),
     this.coverImageUrl = const Value.absent(),
     this.totalEpisodes = const Value.absent(),
+    this.episodesWatched = const Value.absent(),
     required WatchStatus watchStatus,
     this.rating = const Value.absent(),
     this.notes = const Value.absent(),
@@ -776,6 +819,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     Expression<String>? synopsis,
     Expression<String>? coverImageUrl,
     Expression<int>? totalEpisodes,
+    Expression<int>? episodesWatched,
     Expression<String>? watchStatus,
     Expression<double>? rating,
     Expression<String>? notes,
@@ -795,6 +839,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
       if (synopsis != null) 'synopsis': synopsis,
       if (coverImageUrl != null) 'cover_image_url': coverImageUrl,
       if (totalEpisodes != null) 'total_episodes': totalEpisodes,
+      if (episodesWatched != null) 'episodes_watched': episodesWatched,
       if (watchStatus != null) 'watch_status': watchStatus,
       if (rating != null) 'rating': rating,
       if (notes != null) 'notes': notes,
@@ -816,6 +861,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     Value<String?>? synopsis,
     Value<String?>? coverImageUrl,
     Value<int?>? totalEpisodes,
+    Value<int>? episodesWatched,
     Value<WatchStatus>? watchStatus,
     Value<double?>? rating,
     Value<String?>? notes,
@@ -835,6 +881,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
       synopsis: synopsis ?? this.synopsis,
       coverImageUrl: coverImageUrl ?? this.coverImageUrl,
       totalEpisodes: totalEpisodes ?? this.totalEpisodes,
+      episodesWatched: episodesWatched ?? this.episodesWatched,
       watchStatus: watchStatus ?? this.watchStatus,
       rating: rating ?? this.rating,
       notes: notes ?? this.notes,
@@ -869,6 +916,9 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     }
     if (totalEpisodes.present) {
       map['total_episodes'] = Variable<int>(totalEpisodes.value);
+    }
+    if (episodesWatched.present) {
+      map['episodes_watched'] = Variable<int>(episodesWatched.value);
     }
     if (watchStatus.present) {
       map['watch_status'] = Variable<String>(
@@ -919,6 +969,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
           ..write('synopsis: $synopsis, ')
           ..write('coverImageUrl: $coverImageUrl, ')
           ..write('totalEpisodes: $totalEpisodes, ')
+          ..write('episodesWatched: $episodesWatched, ')
           ..write('watchStatus: $watchStatus, ')
           ..write('rating: $rating, ')
           ..write('notes: $notes, ')
@@ -957,6 +1008,7 @@ typedef $$AnimeEntriesTableCreateCompanionBuilder =
       Value<String?> synopsis,
       Value<String?> coverImageUrl,
       Value<int?> totalEpisodes,
+      Value<int> episodesWatched,
       required WatchStatus watchStatus,
       Value<double?> rating,
       Value<String?> notes,
@@ -977,6 +1029,7 @@ typedef $$AnimeEntriesTableUpdateCompanionBuilder =
       Value<String?> synopsis,
       Value<String?> coverImageUrl,
       Value<int?> totalEpisodes,
+      Value<int> episodesWatched,
       Value<WatchStatus> watchStatus,
       Value<double?> rating,
       Value<String?> notes,
@@ -1026,6 +1079,11 @@ class $$AnimeEntriesTableFilterComposer
 
   ColumnFilters<int> get totalEpisodes => $composableBuilder(
     column: $table.totalEpisodes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get episodesWatched => $composableBuilder(
+    column: $table.episodesWatched,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1121,6 +1179,11 @@ class $$AnimeEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get episodesWatched => $composableBuilder(
+    column: $table.episodesWatched,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get watchStatus => $composableBuilder(
     column: $table.watchStatus,
     builder: (column) => ColumnOrderings(column),
@@ -1205,6 +1268,11 @@ class $$AnimeEntriesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get episodesWatched => $composableBuilder(
+    column: $table.episodesWatched,
+    builder: (column) => column,
+  );
+
   GeneratedColumnWithTypeConverter<WatchStatus, String> get watchStatus =>
       $composableBuilder(
         column: $table.watchStatus,
@@ -1278,6 +1346,7 @@ class $$AnimeEntriesTableTableManager
                 Value<String?> synopsis = const Value.absent(),
                 Value<String?> coverImageUrl = const Value.absent(),
                 Value<int?> totalEpisodes = const Value.absent(),
+                Value<int> episodesWatched = const Value.absent(),
                 Value<WatchStatus> watchStatus = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -1296,6 +1365,7 @@ class $$AnimeEntriesTableTableManager
                 synopsis: synopsis,
                 coverImageUrl: coverImageUrl,
                 totalEpisodes: totalEpisodes,
+                episodesWatched: episodesWatched,
                 watchStatus: watchStatus,
                 rating: rating,
                 notes: notes,
@@ -1316,6 +1386,7 @@ class $$AnimeEntriesTableTableManager
                 Value<String?> synopsis = const Value.absent(),
                 Value<String?> coverImageUrl = const Value.absent(),
                 Value<int?> totalEpisodes = const Value.absent(),
+                Value<int> episodesWatched = const Value.absent(),
                 required WatchStatus watchStatus,
                 Value<double?> rating = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -1334,6 +1405,7 @@ class $$AnimeEntriesTableTableManager
                 synopsis: synopsis,
                 coverImageUrl: coverImageUrl,
                 totalEpisodes: totalEpisodes,
+                episodesWatched: episodesWatched,
                 watchStatus: watchStatus,
                 rating: rating,
                 notes: notes,
