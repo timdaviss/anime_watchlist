@@ -16,14 +16,25 @@ class SelectedStatus extends _$SelectedStatus {
 }
 
 @riverpod
+class SelectedSort extends _$SelectedSort {
+  @override
+  SortOption build() => SortOption.updatedAt;
+
+  void setSort(SortOption sort) {
+    state = sort;
+  }
+}
+
+@riverpod
 Stream<List<AnimeEntry>> animeList(Ref ref) {
   final repository = ref.watch(animeRepositoryProvider);
   final status = ref.watch(selectedStatusProvider);
+  final sort = ref.watch(selectedSortProvider);
 
   if (status == null) {
-    return repository.watchAll();
+    return repository.watchAllSorted(sort);
   } else {
-    return repository.watchByStatus(status);
+    return repository.watchByStatusSorted(status, sort);
   }
 }
 
