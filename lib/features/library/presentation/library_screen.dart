@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/core_providers.dart';
+import '../../settings/presentation/settings_screen.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -21,6 +22,15 @@ class LibraryScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.gear),
+          onPressed: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(builder: (context) => const SettingsScreen()),
+            );
+          },
+        ),
         middle: const Text('My Anime'),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
