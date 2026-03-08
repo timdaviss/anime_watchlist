@@ -5,6 +5,7 @@ import '../../../core/providers/core_providers.dart';
 import '../../favorites/presentation/favorites_screen.dart';
 import '../../library/presentation/library_screen.dart';
 import '../../search/presentation/search_screen.dart';
+import '../../statistics/statistics.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -48,6 +49,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: Icon(CupertinoIcons.heart),
             label: 'Favorites',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.chart_bar),
+            label: 'Stats',
+          ),
         ],
       ),
       tabBuilder: (context, index) {
@@ -56,7 +61,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             return switch (index) {
               0 => const LibraryScreen(),
               1 => const SearchScreen(),
-              _ => const FavoritesScreen(),
+              2 => const FavoritesScreen(),
+              _ => const StatisticsScreen(),
             };
           },
         );
