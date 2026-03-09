@@ -22,6 +22,7 @@ class SearchNotifier extends _$SearchNotifier {
 
   Future<void> search(String query) async {
     _currentQuery = query;
+    final source = _selectedSource;
     if (query.trim().isEmpty) {
       state = const AsyncData([]);
       return;
@@ -30,9 +31,11 @@ class SearchNotifier extends _$SearchNotifier {
     state = const AsyncLoading();
     try {
       final repository = ref.read(animeSearchRepositoryProvider);
-      final results = await repository.search(query, source: _selectedSource);
+      final results = await repository.search(query, source: source);
+      if (query != _currentQuery || source != _selectedSource) return;
       state = AsyncData(results);
     } catch (e, st) {
+      if (query != _currentQuery || source != _selectedSource) return;
       state = AsyncError(e, st);
     }
   }
@@ -40,12 +43,24 @@ class SearchNotifier extends _$SearchNotifier {
   void setSource(AnimeSource source) {
     if (_selectedSource == source) return;
     _selectedSource = source;
+    if (_currentQuery.trim().isNotEmpty) {
+      state = const AsyncLoading();
+      search(_currentQuery);
+      return;
+    }
     // Re-emit current state to trigger UI rebuild for segment control
     state = AsyncData(state.value ?? []);
-    if (_currentQuery.trim().isNotEmpty) {
-      search(_currentQuery);
-    }
   }
+}
+
+@riverpod
+Stream<int> libraryRevision(Ref ref) {
+  final repository = ref.watch(animeRepositoryProvider);
+  return repository.watchAll().map(
+    (entries) => Object.hashAll(
+      entries.map((entry) => Object.hash(entry.id, entry.watchStatus)),
+    ),
+  );
 }
 
 @riverpod
@@ -64,6 +79,7 @@ Future<({WatchStatus status, String entryId})?> isInLibrary(
   int sourceId,
   AnimeSource source,
 ) async {
+  ref.watch(libraryRevisionProvider);
   final repository = ref.watch(animeRepositoryProvider);
   if (source == AnimeSource.jikan) {
     final entry = await repository.getByMalId(sourceId);
