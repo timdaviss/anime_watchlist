@@ -12,8 +12,13 @@ part 'search_providers.g.dart';
 class SearchNotifier extends _$SearchNotifier {
   String _currentQuery = '';
   AnimeSource _selectedSource = AnimeSource.jikan;
+  int _currentPage = 1;
+  bool _hasNextPage = false;
+  bool _isLoadingMore = false;
 
   AnimeSource get selectedSource => _selectedSource;
+  bool get hasNextPage => _hasNextPage;
+  bool get isLoadingMore => _isLoadingMore;
 
   @override
   FutureOr<List<AnimeSearchResult>> build() {
@@ -22,7 +27,10 @@ class SearchNotifier extends _$SearchNotifier {
 
   Future<void> search(String query) async {
     _currentQuery = query;
-    final source = _selectedSource;
+    _currentPage = 1;
+    _hasNextPage = false;
+    _isLoadingMore = false;
+    final selectedSource = _selectedSource;
     if (query.trim().isEmpty) {
       state = const AsyncData([]);
       return;
@@ -31,25 +39,77 @@ class SearchNotifier extends _$SearchNotifier {
     state = const AsyncLoading();
     try {
       final repository = ref.read(animeSearchRepositoryProvider);
-      final results = await repository.search(query, source: source);
-      if (query != _currentQuery || source != _selectedSource) return;
-      state = AsyncData(results);
+      final result = await repository.search(
+        query,
+        source: selectedSource,
+        page: 1,
+      );
+      if (query != _currentQuery || selectedSource != _selectedSource) {
+        return;
+      }
+      _hasNextPage = result.hasNextPage;
+      state = AsyncData(result.results);
     } catch (e, st) {
-      if (query != _currentQuery || source != _selectedSource) return;
+      if (query != _currentQuery || selectedSource != _selectedSource) {
+        return;
+      }
       state = AsyncError(e, st);
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (_isLoadingMore || !_hasNextPage || _currentQuery.trim().isEmpty) {
+      return;
+    }
+
+    final currentResults = state.value ?? const <AnimeSearchResult>[];
+    final selectedSource = _selectedSource;
+    final query = _currentQuery;
+    final nextPage = _currentPage + 1;
+
+    _isLoadingMore = true;
+    state = AsyncData([...currentResults]);
+
+    try {
+      final repository = ref.read(animeSearchRepositoryProvider);
+      final result = await repository.search(
+        query,
+        source: selectedSource,
+        page: nextPage,
+      );
+      if (query != _currentQuery || selectedSource != _selectedSource) {
+        return;
+      }
+
+      _currentPage = nextPage;
+      _hasNextPage = result.hasNextPage;
+      state = AsyncData([...currentResults, ...result.results]);
+    } catch (_) {
+      if (query != _currentQuery || selectedSource != _selectedSource) {
+        return;
+      }
+      _hasNextPage = false;
+      state = AsyncData([...currentResults]);
+    } finally {
+      _isLoadingMore = false;
+      if (query == _currentQuery && selectedSource == _selectedSource) {
+        state = AsyncData([...(state.value ?? const <AnimeSearchResult>[])]);
+      }
     }
   }
 
   void setSource(AnimeSource source) {
     if (_selectedSource == source) return;
     _selectedSource = source;
+    _currentPage = 1;
+    _hasNextPage = false;
+    _isLoadingMore = false;
     if (_currentQuery.trim().isNotEmpty) {
       state = const AsyncLoading();
       search(_currentQuery);
-      return;
+    } else {
+      state = AsyncData(state.value ?? []);
     }
-    // Re-emit current state to trigger UI rebuild for segment control
-    state = AsyncData(state.value ?? []);
   }
 }
 

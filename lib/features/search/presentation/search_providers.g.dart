@@ -33,7 +33,7 @@ final class SearchNotifierProvider
   SearchNotifier create() => SearchNotifier();
 }
 
-String _$searchNotifierHash() => r'e1384ee3c60e961639cb29be643bd9dd866a7b61';
+String _$searchNotifierHash() => r'df53ff2f869889b889ca3982d8c69fc176645076';
 
 abstract class _$SearchNotifier
     extends $AsyncNotifier<List<AnimeSearchResult>> {
