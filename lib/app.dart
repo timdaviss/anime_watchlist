@@ -12,21 +12,17 @@ class AnimeWatchlistApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeSettingProvider);
 
+    final theme = switch (themeMode) {
+      AppThemeMode.light => AppTheme.lightTheme,
+      AppThemeMode.dark => AppTheme.darkTheme,
+      AppThemeMode.system => AppTheme.systemTheme,
+    };
+
     return CupertinoApp(
       title: 'Anime Watchlist',
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
-      builder: (context, child) {
-        final brightness = switch (themeMode) {
-          AppThemeMode.light => Brightness.light,
-          AppThemeMode.dark => Brightness.dark,
-          AppThemeMode.system => MediaQuery.platformBrightnessOf(context),
-        };
-        final theme = brightness == Brightness.dark
-            ? AppTheme.darkTheme
-            : AppTheme.lightTheme;
-        return CupertinoTheme(data: theme, child: child!);
-      },
+      theme: theme,
     );
   }
 }
