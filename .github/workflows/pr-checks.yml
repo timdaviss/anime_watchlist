@@ -83,7 +83,6 @@ jobs:
       - name: Upload to Appetize.io
         id: appetize
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-        continue-on-error: true
         run: |
           RESPONSE=$(curl -sS -X POST https://api.appetize.io/v1/apps \
             -H "X-API-KEY: ${{ secrets.APPETIZE_API_TOKEN }}" \
@@ -112,9 +111,22 @@ jobs:
           script: |
             const status = '${{ job.status }}';
             const emoji = status === 'success' ? '✅' : '❌';
+            const appetizeOutcome = '${{ steps.appetize.outcome }}';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const artifactUrl = `${runUrl}#artifacts`;
             const appetizeUrl = 'https://appetize.io/app/ios/com.timdavis.animeWatchlist?device=iphone14pro&osVersion=16.2&toolbar=true';
+
+            const previewSection = appetizeOutcome === 'success'
+              ? [
+                  '',
+                  `### 📱 [Launch Interactive Preview](${appetizeUrl})`,
+                  '',
+                  `> Click the link above to run this build in a browser-based iOS simulator`,
+                ]
+              : [
+                  '',
+                  `> ⚠️ Interactive preview unavailable (Appetize upload ${appetizeOutcome || 'skipped'})`,
+                ];
 
             const body = [
               `## ${emoji} iOS Simulator Preview`,
@@ -125,10 +137,7 @@ jobs:
               `| **Flutter** | 3.41.3 |`,
               `| **Runner** | macos-15 |`,
               `| **Commit** | \`${context.sha.substring(0, 7)}\` |`,
-              '',
-              `### 📱 [Launch Interactive Preview](${appetizeUrl})`,
-              '',
-              `> Click the link above to run this build in a browser-based iOS simulator`,
+              ...previewSection,
               '',
               `📦 [Download build artifact](${artifactUrl})`,
               '',
