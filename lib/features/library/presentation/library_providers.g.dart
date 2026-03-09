@@ -61,6 +61,58 @@ abstract class _$SelectedStatus extends $Notifier<WatchStatus?> {
   }
 }
 
+@ProviderFor(SelectedSort)
+final selectedSortProvider = SelectedSortProvider._();
+
+final class SelectedSortProvider
+    extends $NotifierProvider<SelectedSort, SortOption> {
+  SelectedSortProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedSortProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedSortHash();
+
+  @$internal
+  @override
+  SelectedSort create() => SelectedSort();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SortOption value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SortOption>(value),
+    );
+  }
+}
+
+String _$selectedSortHash() => r'0f58d3cc487cef1911b206a4ab69939066313611';
+
+abstract class _$SelectedSort extends $Notifier<SortOption> {
+  SortOption build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<SortOption, SortOption>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SortOption, SortOption>,
+              SortOption,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(LibrarySearchQuery)
 final librarySearchQueryProvider = LibrarySearchQueryProvider._();
 
@@ -151,7 +203,7 @@ final class AnimeListProvider
   }
 }
 
-String _$animeListHash() => r'4020f73792a24ff9e6fb62ac07778d94675c64f9';
+String _$animeListHash() => r'957e0d64bc486688c8ab8cdd8cf079923b54c214';
 
 @ProviderFor(animeDetail)
 final animeDetailProvider = AnimeDetailFamily._();

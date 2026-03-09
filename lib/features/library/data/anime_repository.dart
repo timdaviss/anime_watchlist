@@ -13,9 +13,24 @@ class AnimeRepository {
     );
   }
 
+  Stream<List<model.AnimeEntry>> watchAllSorted(SortOption sort) {
+    return _dao
+        .watchAllSorted(sort)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
   Stream<List<model.AnimeEntry>> watchByStatus(WatchStatus status) {
     return _dao
         .watchByStatus(status)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
+  Stream<List<model.AnimeEntry>> watchByStatusSorted(
+    WatchStatus status,
+    SortOption sort,
+  ) {
+    return _dao
+        .watchByStatusSorted(status, sort)
         .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
   }
 

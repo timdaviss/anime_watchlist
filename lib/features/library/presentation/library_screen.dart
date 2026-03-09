@@ -5,6 +5,7 @@ import '../../../core/providers/core_providers.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_indicator.dart';
+import '../domain/watch_status.dart';
 import 'add_anime_screen.dart';
 import 'anime_detail_screen.dart';
 import 'export_import_screen.dart';
@@ -27,6 +28,11 @@ class LibraryScreen extends ConsumerWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: const Icon(CupertinoIcons.sort_down),
+              onPressed: () => _showSortPicker(context, ref),
+            ),
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: () {
@@ -209,4 +215,38 @@ class LibraryScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+void _showSortPicker(BuildContext context, WidgetRef ref) {
+  final currentSort = ref.read(selectedSortProvider);
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (context) => CupertinoActionSheet(
+      title: const Text('Sort By'),
+      actions: SortOption.values
+          .map(
+            (option) => CupertinoActionSheetAction(
+              onPressed: () {
+                ref.read(selectedSortProvider.notifier).setSort(option);
+                Navigator.of(context).pop();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(option.displayName),
+                  if (option == currentSort) ...[
+                    const SizedBox(width: 8),
+                    const Icon(CupertinoIcons.checkmark, size: 16),
+                  ],
+                ],
+              ),
+            ),
+          )
+          .toList(),
+      cancelButton: CupertinoActionSheetAction(
+        onPressed: () => Navigator.of(context).pop(),
+        child: const Text('Cancel'),
+      ),
+    ),
+  );
 }
