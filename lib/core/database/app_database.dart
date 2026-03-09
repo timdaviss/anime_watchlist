@@ -180,6 +180,13 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
     await (delete(animeEntries)..where((tbl) => tbl.id.equals(id))).go();
   }
 
+  Future<void> deleteEntries(List<String> ids) async {
+    if (ids.isEmpty) {
+      return;
+    }
+    await (delete(animeEntries)..where((tbl) => tbl.id.isIn(ids))).go();
+  }
+
   Future<void> toggleFavorite(String id) async {
     final entry = await getById(id);
     if (entry == null) {
@@ -188,6 +195,30 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
     await (update(animeEntries)..where((tbl) => tbl.id.equals(id))).write(
       AnimeEntriesCompanion(
         isFavorite: Value(!entry.isFavorite),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<void> updateStatusBatch(List<String> ids, WatchStatus status) async {
+    if (ids.isEmpty) {
+      return;
+    }
+    await (update(animeEntries)..where((tbl) => tbl.id.isIn(ids))).write(
+      AnimeEntriesCompanion(
+        watchStatus: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<void> toggleFavorites(List<String> ids, bool favorite) async {
+    if (ids.isEmpty) {
+      return;
+    }
+    await (update(animeEntries)..where((tbl) => tbl.id.isIn(ids))).write(
+      AnimeEntriesCompanion(
+        isFavorite: Value(favorite),
         updatedAt: Value(DateTime.now()),
       ),
     );

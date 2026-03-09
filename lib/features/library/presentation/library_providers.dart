@@ -36,6 +36,30 @@ class LibrarySearchQuery extends _$LibrarySearchQuery {
 }
 
 @riverpod
+class SelectionMode extends _$SelectionMode {
+  @override
+  Set<String> build() => {};
+
+  void toggle(String id) {
+    if (state.contains(id)) {
+      final next = {...state};
+      next.remove(id);
+      state = next;
+    } else {
+      state = {...state, id};
+    }
+  }
+
+  void selectAll(List<String> ids) {
+    state = {...ids};
+  }
+
+  void clear() {
+    state = {};
+  }
+}
+
+@riverpod
 Stream<List<AnimeEntry>> animeList(Ref ref) {
   final repository = ref.watch(animeRepositoryProvider);
   final status = ref.watch(selectedStatusProvider);

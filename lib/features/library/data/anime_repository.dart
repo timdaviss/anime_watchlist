@@ -84,7 +84,15 @@ class AnimeRepository {
 
   Future<void> deleteEntry(String id) => _dao.deleteEntry(id);
 
+  Future<void> deleteEntries(List<String> ids) => _dao.deleteEntries(ids);
+
   Future<void> toggleFavorite(String id) => _dao.toggleFavorite(id);
+
+  Future<void> updateStatusBatch(List<String> ids, WatchStatus status) =>
+      _dao.updateStatusBatch(ids, status);
+
+  Future<void> setFavorites(List<String> ids, bool favorite) =>
+      _dao.toggleFavorites(ids, favorite);
 
   Future<Map<WatchStatus, int>> countByStatus() => _dao.countByStatus();
 }
