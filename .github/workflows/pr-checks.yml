@@ -11,7 +11,6 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   lint-and-test:
@@ -43,6 +42,9 @@ jobs:
     name: iOS Simulator Preview
     needs: lint-and-test
     runs-on: macos-15
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -80,6 +82,8 @@ jobs:
 
       - name: Upload to Appetize.io
         id: appetize
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        continue-on-error: true
         run: |
           RESPONSE=$(curl -sS -X POST https://api.appetize.io/v1/apps \
             -H "X-API-KEY: ${{ secrets.APPETIZE_API_TOKEN }}" \
@@ -131,7 +135,7 @@ jobs:
               `🔗 [View full workflow run](${runUrl})`,
             ].join('\n');
 
-            const { data: comments } = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
