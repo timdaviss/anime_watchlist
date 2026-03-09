@@ -142,6 +142,17 @@ class AnimeListTile extends StatelessWidget {
                       ],
                     ],
                   ),
+                  if (anime.totalEpisodes != null &&
+                      anime.totalEpisodes! > 0) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${anime.episodesWatched}/${anime.totalEpisodes} episodes',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: CupertinoColors.secondaryLabel,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
