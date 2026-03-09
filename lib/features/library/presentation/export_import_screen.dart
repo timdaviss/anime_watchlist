@@ -294,9 +294,11 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Export your entire library as a JSON backup file.',
-              style: TextStyle(color: CupertinoColors.secondaryLabel),
+              style: TextStyle(
+                color: CupertinoColors.secondaryLabel.resolveFrom(context),
+              ),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -314,9 +316,11 @@ class _ExportImportScreenState extends ConsumerState<ExportImportScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Paste a previously exported JSON backup to restore entries.',
-              style: TextStyle(color: CupertinoColors.secondaryLabel),
+              style: TextStyle(
+                color: CupertinoColors.secondaryLabel.resolveFrom(context),
+              ),
             ),
             const SizedBox(height: 12),
             SizedBox(

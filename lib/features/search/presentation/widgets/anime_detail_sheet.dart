@@ -69,9 +69,9 @@ class _AnimeDetailSheetState extends ConsumerState<AnimeDetailSheet> {
               const SizedBox(height: 4),
               Text(
                 result.titleJapanese!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: CupertinoColors.secondaryLabel,
+                  color: CupertinoColors.secondaryLabel.resolveFrom(context),
                 ),
               ),
             ],
@@ -307,15 +307,15 @@ class _InfoRow extends StatelessWidget {
       child: Text.rich(
         TextSpan(
           text: '$label: ',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
-            color: CupertinoColors.secondaryLabel,
+            color: CupertinoColors.secondaryLabel.resolveFrom(context),
           ),
           children: [
             TextSpan(
               text: value,
-              style: const TextStyle(
-                color: CupertinoColors.label,
+              style: TextStyle(
+                color: CupertinoColors.label.resolveFrom(context),
                 fontWeight: FontWeight.w500,
               ),
             ),

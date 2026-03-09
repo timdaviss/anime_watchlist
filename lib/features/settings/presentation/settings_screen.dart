@@ -15,13 +15,13 @@ class SettingsScreen extends ConsumerWidget {
       child: SafeArea(
         child: ListView(
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
               child: Text(
                 'APPEARANCE',
                 style: TextStyle(
                   fontSize: 13,
-                  color: CupertinoColors.secondaryLabel,
+                  color: CupertinoColors.secondaryLabel.resolveFrom(context),
                   fontWeight: FontWeight.w600,
                 ),
               ),

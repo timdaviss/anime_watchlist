@@ -24,7 +24,7 @@ class RatingWidget extends StatelessWidget {
           allowHalfRating: true,
           itemCount: 5,
           itemSize: 22,
-          unratedColor: CupertinoColors.systemGrey4,
+          unratedColor: CupertinoColors.systemGrey4.resolveFrom(context),
           itemPadding: const EdgeInsets.symmetric(horizontal: 2),
           itemBuilder: (context, index) => const Icon(
             CupertinoIcons.star_fill,
@@ -35,9 +35,9 @@ class RatingWidget extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           initialRating > 0 ? initialRating.toStringAsFixed(1) : '--',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: CupertinoColors.secondaryLabel,
+            color: CupertinoColors.secondaryLabel.resolveFrom(context),
           ),
         ),
       ],

@@ -33,7 +33,7 @@ class AnimeListTile extends StatelessWidget {
     }
   }
 
-  Widget _buildRatingStars(double rating) {
+  Widget _buildRatingStars(BuildContext context, double rating) {
     final stars = (rating / 2).clamp(0.0, 5.0);
     final fullStars = stars.floor();
     final hasHalfStar = stars - fullStars >= 0.5;
@@ -55,10 +55,10 @@ class AnimeListTile extends StatelessWidget {
             color: CupertinoColors.systemYellow,
           ),
         for (int i = 0; i < emptyStars; i++)
-          const Icon(
+          Icon(
             CupertinoIcons.star,
             size: 12,
-            color: CupertinoColors.systemGrey4,
+            color: CupertinoColors.systemGrey4.resolveFrom(context),
           ),
       ],
     );
@@ -140,7 +140,7 @@ class AnimeListTile extends StatelessWidget {
                       ),
                       if (anime.rating != null) ...[
                         const SizedBox(width: 8),
-                        _buildRatingStars(anime.rating!),
+                        _buildRatingStars(context, anime.rating!),
                       ],
                     ],
                   ),
@@ -149,9 +149,11 @@ class AnimeListTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       '${anime.episodesWatched}/${anime.totalEpisodes} episodes',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: CupertinoColors.secondaryLabel,
+                        color: CupertinoColors.secondaryLabel.resolveFrom(
+                          context,
+                        ),
                       ),
                     ),
                   ],

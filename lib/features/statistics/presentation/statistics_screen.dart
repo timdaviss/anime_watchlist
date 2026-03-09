@@ -20,15 +20,17 @@ class StatisticsScreen extends ConsumerWidget {
         child: statsAsync.when(
           data: (stats) {
             if (stats.totalCount == 0) {
-              return const Center(
+              return Center(
                 child: Padding(
-                  padding: EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(32),
                   child: Text(
                     'No stats yet. Add some anime to your library!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
-                      color: CupertinoColors.secondaryLabel,
+                      color: CupertinoColors.secondaryLabel.resolveFrom(
+                        context,
+                      ),
                     ),
                   ),
                 ),
@@ -76,13 +78,10 @@ class StatisticsScreen extends ConsumerWidget {
 
   List<Widget> _buildGenreRows(Map<String, int> genreCounts) {
     if (genreCounts.isEmpty) {
-      return const [
-        Padding(
+      return [
+        const Padding(
           padding: EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            'No genre data yet.',
-            style: TextStyle(color: CupertinoColors.secondaryLabel),
-          ),
+          child: Text('No genre data yet.'),
         ),
       ];
     }
@@ -158,9 +157,13 @@ class _StatCard extends StatelessWidget {
       width: 154,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: CupertinoColors.secondarySystemGroupedBackground,
+        color: CupertinoColors.secondarySystemGroupedBackground.resolveFrom(
+          context,
+        ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: CupertinoColors.separator),
+        border: Border.all(
+          color: CupertinoColors.separator.resolveFrom(context),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,9 +183,9 @@ class _StatCard extends StatelessWidget {
           ),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: CupertinoColors.secondaryLabel,
+              color: CupertinoColors.secondaryLabel.resolveFrom(context),
             ),
           ),
         ],
@@ -222,9 +225,9 @@ class _StatusRow extends StatelessWidget {
             Expanded(child: Text(label)),
             Text(
               '$count',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: CupertinoColors.secondaryLabel,
+                color: CupertinoColors.secondaryLabel.resolveFrom(context),
               ),
             ),
           ],
@@ -234,7 +237,7 @@ class _StatusRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
           child: Container(
             height: 8,
-            color: CupertinoColors.systemGrey5,
+            color: CupertinoColors.systemGrey5.resolveFrom(context),
             child: FractionallySizedBox(
               widthFactor: fraction,
               alignment: Alignment.centerLeft,
@@ -281,8 +284,8 @@ class _BarRow extends StatelessWidget {
               ),
               Text(
                 '$count',
-                style: const TextStyle(
-                  color: CupertinoColors.secondaryLabel,
+                style: TextStyle(
+                  color: CupertinoColors.secondaryLabel.resolveFrom(context),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -293,7 +296,7 @@ class _BarRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
             child: Container(
               height: 8,
-              color: CupertinoColors.systemGrey5,
+              color: CupertinoColors.systemGrey5.resolveFrom(context),
               child: FractionallySizedBox(
                 widthFactor: fraction,
                 alignment: Alignment.centerLeft,
@@ -358,9 +361,9 @@ class _RatingBar extends StatelessWidget {
       children: [
         Text(
           '$count',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 10,
-            color: CupertinoColors.secondaryLabel,
+            color: CupertinoColors.secondaryLabel.resolveFrom(context),
           ),
         ),
         const SizedBox(height: 4),
@@ -372,7 +375,7 @@ class _RatingBar extends StatelessWidget {
               child: Container(
                 width: 18,
                 height: 120,
-                color: CupertinoColors.systemGrey5,
+                color: CupertinoColors.systemGrey5.resolveFrom(context),
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: FractionallySizedBox(
@@ -387,9 +390,9 @@ class _RatingBar extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
-            color: CupertinoColors.secondaryLabel,
+            color: CupertinoColors.secondaryLabel.resolveFrom(context),
           ),
         ),
       ],

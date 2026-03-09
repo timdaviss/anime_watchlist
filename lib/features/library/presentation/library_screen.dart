@@ -263,7 +263,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       : CupertinoIcons.circle,
                   color: isSelected
                       ? CupertinoColors.systemIndigo
-                      : CupertinoColors.systemGrey3,
+                      : CupertinoColors.systemGrey3.resolveFrom(context),
                 ),
               ),
             Expanded(
