@@ -38,3 +38,37 @@ jobs:
 
       - name: Run tests
         run: flutter test
+
+  ios-simulator-preview:
+    name: iOS Simulator Preview
+    needs: lint-and-test
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.3"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install CocoaPods
+        run: cd ios && pod install
+
+      - name: Build iOS simulator app
+        run: flutter build ios --simulator --no-codesign
