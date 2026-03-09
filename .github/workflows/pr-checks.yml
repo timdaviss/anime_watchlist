@@ -74,7 +74,7 @@ jobs:
         run: flutter build ios --simulator --no-codesign
 
       - name: Boot iOS simulator
-        uses: futureware-tech/simulator-action@v4
+        uses: futureware-tech/simulator-action@dab10d813144ef59b48d401cd95da151222ef8cd # v4
         with:
           model: "iPhone 16"
 
@@ -103,7 +103,8 @@ jobs:
           retention-days: 14
 
       - name: Comment on PR
-        if: always()
+        if: ${{ always() && github.event.pull_request.head.repo.full_name == github.repository }}
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
