@@ -7,6 +7,7 @@ import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import 'add_anime_screen.dart';
 import 'anime_detail_screen.dart';
+import 'export_import_screen.dart';
 import 'library_providers.dart';
 import 'widgets/anime_list_tile.dart';
 import 'widgets/status_filter_bar.dart';
@@ -23,14 +24,32 @@ class LibraryScreen extends ConsumerWidget {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text('My Anime'),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.add),
-          onPressed: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(builder: (context) => const AddAnimeScreen()),
-            );
-          },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const ExportImportScreen(),
+                  ),
+                );
+              },
+              child: const Icon(CupertinoIcons.square_arrow_up),
+            ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: const Icon(CupertinoIcons.add),
+              onPressed: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const AddAnimeScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
       child: SafeArea(
