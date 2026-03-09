@@ -62,9 +62,11 @@ class SearchResultCard extends ConsumerWidget {
                       result.titleJapanese!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: CupertinoColors.secondaryLabel,
+                        color: CupertinoColors.secondaryLabel.resolveFrom(
+                          context,
+                        ),
                       ),
                     ),
                   ],
@@ -87,9 +89,11 @@ class SearchResultCard extends ConsumerWidget {
                       result.genres!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: CupertinoColors.tertiaryLabel,
+                        color: CupertinoColors.tertiaryLabel.resolveFrom(
+                          context,
+                        ),
                       ),
                     ),
                   ],
@@ -157,15 +161,15 @@ class _MetaRow extends StatelessWidget {
       child: Text.rich(
         TextSpan(
           text: '$label: ',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: CupertinoColors.secondaryLabel,
+            color: CupertinoColors.secondaryLabel.resolveFrom(context),
           ),
           children: [
             TextSpan(
               text: value,
-              style: const TextStyle(
-                color: CupertinoColors.label,
+              style: TextStyle(
+                color: CupertinoColors.label.resolveFrom(context),
                 fontWeight: FontWeight.w500,
               ),
             ),

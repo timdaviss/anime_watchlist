@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/core_providers.dart';
+import '../../settings/presentation/settings_screen.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -38,7 +39,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 onPressed: _clearSelection,
                 child: const Text('Cancel'),
               )
-            : null,
+            : CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(CupertinoIcons.gear),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
+                  );
+                },
+              ),
         middle: Text(
           isSelecting ? '${selectedIds.length} Selected' : 'My Anime',
         ),
@@ -134,13 +145,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   }
                   return ListView.separated(
                     itemCount: animeList.length,
-                    separatorBuilder: (context, index) => const Padding(
-                      padding: EdgeInsets.only(left: 92),
+                    separatorBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(left: 92),
                       child: SizedBox(
                         height: 1,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: CupertinoColors.separator,
+                            color: CupertinoColors.separator.resolveFrom(
+                              context,
+                            ),
                           ),
                         ),
                       ),
@@ -250,7 +263,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       : CupertinoIcons.circle,
                   color: isSelected
                       ? CupertinoColors.systemIndigo
-                      : CupertinoColors.systemGrey3,
+                      : CupertinoColors.systemGrey3.resolveFrom(context),
                 ),
               ),
             Expanded(

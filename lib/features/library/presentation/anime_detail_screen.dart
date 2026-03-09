@@ -190,9 +190,11 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
                         const SizedBox(height: 4),
                         Text(
                           anime.titleJapanese!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
-                            color: CupertinoColors.secondaryLabel,
+                            color: CupertinoColors.secondaryLabel.resolveFrom(
+                              context,
+                            ),
                           ),
                         ),
                       ],
@@ -207,7 +209,9 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: CupertinoColors.systemGrey6,
+                                color: CupertinoColors.systemGrey6.resolveFrom(
+                                  context,
+                                ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
@@ -466,9 +470,11 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
                       const SizedBox(height: 24),
                       Text(
                         'Added ${formatDate(anime.createdAt)} • Source: ${anime.source.displayName}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: CupertinoColors.secondaryLabel,
+                          color: CupertinoColors.secondaryLabel.resolveFrom(
+                            context,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),

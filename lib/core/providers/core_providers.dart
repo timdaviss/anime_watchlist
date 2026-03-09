@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/library/data/anime_repository.dart';
 import '../../features/search/data/anime_search_repository.dart';
@@ -19,6 +20,11 @@ class CurrentTab extends _$CurrentTab {
   void setIndex(int index) {
     state = index;
   }
+}
+
+@riverpod
+SharedPreferences sharedPreferences(Ref ref) {
+  throw UnimplementedError('Must be overridden in main()');
 }
 
 @riverpod
