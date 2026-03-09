@@ -20,7 +20,7 @@ final class ThemeSettingProvider
         argument: null,
         retry: null,
         name: r'themeSettingProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -41,7 +41,7 @@ final class ThemeSettingProvider
   }
 }
 
-String _$themeSettingHash() => r'fe46e7639894c2d17d00f976cdc650111ddf1bf5';
+String _$themeSettingHash() => r'ff2405e1cc0aed3439a8df0f851657fae3bb4727';
 
 abstract class _$ThemeSetting extends $Notifier<AppThemeMode> {
   AppThemeMode build();

@@ -1,6 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/providers/core_providers.dart';
+
 part 'theme_provider.g.dart';
 
 enum AppThemeMode {
@@ -15,24 +17,19 @@ enum AppThemeMode {
   };
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ThemeSetting extends _$ThemeSetting {
   static const _key = 'theme_mode';
 
+  SharedPreferences get _prefs => ref.read(sharedPreferencesProvider);
+
   @override
   AppThemeMode build() {
-    _loadFromPrefs();
-    return AppThemeMode.system;
-  }
-
-  Future<void> _loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final value = prefs.getString(_key);
+    final value = _prefs.getString(_key);
     if (value == null) {
-      return;
+      return AppThemeMode.system;
     }
-
-    state = AppThemeMode.values.firstWhere(
+    return AppThemeMode.values.firstWhere(
       (mode) => mode.name == value,
       orElse: () => AppThemeMode.system,
     );
@@ -40,7 +37,6 @@ class ThemeSetting extends _$ThemeSetting {
 
   Future<void> setTheme(AppThemeMode mode) async {
     state = mode;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_key, mode.name);
+    await _prefs.setString(_key, mode.name);
   }
 }
