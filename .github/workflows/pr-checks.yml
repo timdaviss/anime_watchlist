@@ -87,13 +87,11 @@ jobs:
             -F "platform=ios" \
             -F "note=${{ github.event.pull_request.head.sha }}")
           PUBLIC_KEY=$(echo "$RESPONSE" | jq -r '.publicKey')
-          APP_URL=$(echo "$RESPONSE" | jq -r '.appUrl')
           if [ "$PUBLIC_KEY" = "null" ] || [ -z "$PUBLIC_KEY" ]; then
             echo "::error::Appetize upload failed: $RESPONSE"
             exit 1
           fi
           echo "public_key=$PUBLIC_KEY" >> "$GITHUB_OUTPUT"
-          echo "app_url=$APP_URL" >> "$GITHUB_OUTPUT"
 
       - name: Upload iOS simulator build
         uses: actions/upload-artifact@v4
@@ -106,29 +104,13 @@ jobs:
         if: ${{ always() && github.event.pull_request.head.repo.full_name == github.repository }}
         continue-on-error: true
         uses: actions/github-script@v7
-        env:
-          APPETIZE_PUBLIC_KEY: ${{ steps.appetize.outputs.public_key }}
-          APPETIZE_APP_URL: ${{ steps.appetize.outputs.app_url }}
         with:
           script: |
             const status = '${{ job.status }}';
             const emoji = status === 'success' ? '✅' : '❌';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const artifactUrl = `${runUrl}#artifacts`;
-            const appetizeKey = process.env.APPETIZE_PUBLIC_KEY;
-            const appetizeUrl = process.env.APPETIZE_APP_URL || (appetizeKey ? `https://appetize.io/app/${appetizeKey}` : '');
-
-            const previewSection = appetizeUrl
-              ? [
-                  '',
-                  `### 📱 [Launch Interactive Preview](${appetizeUrl})`,
-                  '',
-                  `> Click the link above to run this build in a browser-based iOS simulator`,
-                ]
-              : [
-                  '',
-                  '> ⚠️ Appetize preview unavailable — check the workflow logs for details.',
-                ];
+            const appetizeUrl = 'https://appetize.io/app/ios/com.timdavis.animeWatchlist?device=iphone14pro&osVersion=16.2&toolbar=true';
 
             const body = [
               `## ${emoji} iOS Simulator Preview`,
@@ -139,7 +121,10 @@ jobs:
               `| **Flutter** | 3.41.3 |`,
               `| **Runner** | macos-15 |`,
               `| **Commit** | \`${context.sha.substring(0, 7)}\` |`,
-              ...previewSection,
+              '',
+              `### 📱 [Launch Interactive Preview](${appetizeUrl})`,
+              '',
+              `> Click the link above to run this build in a browser-based iOS simulator`,
               '',
               `📦 [Download build artifact](${artifactUrl})`,
               '',
