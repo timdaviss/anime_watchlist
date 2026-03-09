@@ -34,6 +34,16 @@ class AnimeEntries extends Table {
   Set<Column<Object>>? get primaryKey => {id};
 }
 
+class SearchCacheEntries extends Table {
+  TextColumn get query => text()();
+  TextColumn get source => textEnum<AnimeSource>()();
+  TextColumn get resultsJson => text()();
+  DateTimeColumn get cachedAt => dateTime()();
+
+  @override
+  Set<Column<Object>>? get primaryKey => {query, source};
+}
+
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -42,7 +52,10 @@ LazyDatabase _openConnection() {
   });
 }
 
-@DriftDatabase(tables: [AnimeEntries], daos: [AnimeEntriesDao])
+@DriftDatabase(
+  tables: [AnimeEntries, SearchCacheEntries],
+  daos: [AnimeEntriesDao, SearchCacheDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
@@ -55,6 +68,7 @@ class AppDatabase extends _$AppDatabase {
       onUpgrade: (migrator, from, to) async {
         if (from < 2) {
           await migrator.addColumn(animeEntries, animeEntries.episodesWatched);
+          await migrator.createTable(searchCacheEntries);
         }
       },
     );
@@ -252,5 +266,64 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
       SortOption.createdAt => (tbl) => OrderingTerm.desc(tbl.createdAt),
       SortOption.status => (tbl) => OrderingTerm.asc(tbl.watchStatus),
     };
+  }
+}
+
+@DriftAccessor(tables: [SearchCacheEntries])
+class SearchCacheDao extends DatabaseAccessor<AppDatabase>
+    with _$SearchCacheDaoMixin {
+  SearchCacheDao(super.db);
+
+  Future<String?> getCachedResults(String query, AnimeSource source) async {
+    final normalizedQuery = query.toLowerCase().trim();
+    final result =
+        await (select(searchCacheEntries)..where(
+              (tbl) =>
+                  tbl.query.equals(normalizedQuery) &
+                  tbl.source.equalsValue(source),
+            ))
+            .getSingleOrNull();
+    return result?.resultsJson;
+  }
+
+  Future<void> cacheResults(
+    String query,
+    AnimeSource source,
+    String resultsJson,
+  ) async {
+    final normalizedQuery = query.toLowerCase().trim();
+    await into(searchCacheEntries).insertOnConflictUpdate(
+      SearchCacheEntriesCompanion(
+        query: Value(normalizedQuery),
+        source: Value(source),
+        resultsJson: Value(resultsJson),
+        cachedAt: Value(DateTime.now()),
+      ),
+    );
+    await _evictOldEntries();
+  }
+
+  Future<void> _evictOldEntries() async {
+    final allEntries = await (select(
+      searchCacheEntries,
+    )..orderBy([(tbl) => OrderingTerm.desc(tbl.cachedAt)])).get();
+
+    if (allEntries.length <= 100) {
+      return;
+    }
+
+    final toDelete = allEntries.sublist(100);
+    for (final entry in toDelete) {
+      await (delete(searchCacheEntries)..where(
+            (tbl) =>
+                tbl.query.equals(entry.query) &
+                tbl.source.equalsValue(entry.source),
+          ))
+          .go();
+    }
+  }
+
+  Future<void> clearCache() async {
+    await delete(searchCacheEntries).go();
   }
 }
