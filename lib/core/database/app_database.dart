@@ -97,8 +97,10 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<int> countAll() async {
-    final rows = await select(animeEntries).get();
-    return rows.length;
+    final countExp = animeEntries.id.count();
+    final query = selectOnly(animeEntries)..addColumns([countExp]);
+    final row = await query.getSingle();
+    return row.read(countExp)!;
   }
 
   Future<void> insertEntry(AnimeEntriesCompanion companion) async {
@@ -135,10 +137,21 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<Map<WatchStatus, int>> countByStatus() async {
-    final rows = await select(animeEntries).get();
+    final countExp = animeEntries.id.count();
+    final query = selectOnly(animeEntries)
+      ..addColumns([animeEntries.watchStatus, countExp])
+      ..groupBy([animeEntries.watchStatus]);
+    final rows = await query.get();
     final counts = <WatchStatus, int>{};
     for (final row in rows) {
-      counts.update(row.watchStatus, (value) => value + 1, ifAbsent: () => 1);
+      final statusString = row.read(animeEntries.watchStatus);
+      final count = row.read(countExp);
+      if (statusString != null && count != null) {
+        final status = $AnimeEntriesTable.$converterwatchStatus.fromSql(
+          statusString,
+        );
+        counts[status] = count;
+      }
     }
     return counts;
   }
