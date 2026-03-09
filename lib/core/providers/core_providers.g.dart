@@ -312,3 +312,92 @@ final class AnimeSearchRepositoryProvider
 
 String _$animeSearchRepositoryHash() =>
     r'c799f2fa43f8221d81b012f52de70fdbe18a1715';
+
+@ProviderFor(searchCacheDao)
+final searchCacheDaoProvider = SearchCacheDaoProvider._();
+
+final class SearchCacheDaoProvider
+    extends $FunctionalProvider<SearchCacheDao, SearchCacheDao, SearchCacheDao>
+    with $Provider<SearchCacheDao> {
+  SearchCacheDaoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'searchCacheDaoProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$searchCacheDaoHash();
+
+  @$internal
+  @override
+  $ProviderElement<SearchCacheDao> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SearchCacheDao create(Ref ref) {
+    return searchCacheDao(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SearchCacheDao value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SearchCacheDao>(value),
+    );
+  }
+}
+
+String _$searchCacheDaoHash() => r'4c8b7a61fd50f7b559d4ac405f229e882adf97be';
+
+@ProviderFor(searchCacheService)
+final searchCacheServiceProvider = SearchCacheServiceProvider._();
+
+final class SearchCacheServiceProvider
+    extends
+        $FunctionalProvider<
+          SearchCacheService,
+          SearchCacheService,
+          SearchCacheService
+        >
+    with $Provider<SearchCacheService> {
+  SearchCacheServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'searchCacheServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$searchCacheServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<SearchCacheService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SearchCacheService create(Ref ref) {
+    return searchCacheService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SearchCacheService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SearchCacheService>(value),
+    );
+  }
+}
+
+String _$searchCacheServiceHash() =>
+    r'00169090604d21035b855e39dcc69d5d1fdf0a11';

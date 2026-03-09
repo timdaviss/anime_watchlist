@@ -26,6 +26,7 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
   late final ScrollController _scrollController;
   final GlobalKey _notesSectionKey = GlobalKey();
   bool _isSynopsisExpanded = false;
+  bool _notesInitialized = false;
 
   @override
   void initState() {
@@ -136,8 +137,11 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
           );
         }
 
-        if (_notesController.text.isEmpty && anime.notes != null) {
+        if (!_notesInitialized && anime.notes != null) {
           _notesController.text = anime.notes!;
+          _notesInitialized = true;
+        } else if (!_notesInitialized) {
+          _notesInitialized = true;
         }
 
         final genres =
@@ -239,6 +243,116 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 12),
+                      if (anime.totalEpisodes != null &&
+                          anime.totalEpisodes! > 0)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Episode Progress',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: anime.episodesWatched > 0
+                                      ? () {
+                                          repository.updateEntry(
+                                            anime.copyWith(
+                                              episodesWatched:
+                                                  anime.episodesWatched - 1,
+                                              updatedAt: DateTime.now(),
+                                            ),
+                                          );
+                                        }
+                                      : null,
+                                  child: const Icon(
+                                    CupertinoIcons.minus_circle,
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${anime.episodesWatched} / ${anime.totalEpisodes}',
+                                        style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(3),
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          height: 6,
+                                          child: LayoutBuilder(
+                                            builder: (context, constraints) {
+                                              final progress =
+                                                  anime.totalEpisodes! > 0
+                                                  ? (anime.episodesWatched /
+                                                            anime
+                                                                .totalEpisodes!)
+                                                        .clamp(0.0, 1.0)
+                                                  : 0.0;
+                                              return Stack(
+                                                children: [
+                                                  Container(
+                                                    width: constraints.maxWidth,
+                                                    color: CupertinoColors
+                                                        .systemGrey5,
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        constraints.maxWidth *
+                                                        progress,
+                                                    color: CupertinoColors
+                                                        .systemIndigo,
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed:
+                                      anime.episodesWatched <
+                                          anime.totalEpisodes!
+                                      ? () {
+                                          repository.updateEntry(
+                                            anime.copyWith(
+                                              episodesWatched:
+                                                  anime.episodesWatched + 1,
+                                              updatedAt: DateTime.now(),
+                                            ),
+                                          );
+                                        }
+                                      : null,
+                                  child: const Icon(
+                                    CupertinoIcons.plus_circle,
+                                    size: 28,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        ),
                       CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: () => repository.toggleFavorite(anime.id),

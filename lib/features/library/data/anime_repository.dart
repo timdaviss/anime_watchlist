@@ -13,9 +13,39 @@ class AnimeRepository {
     );
   }
 
+  Stream<List<model.AnimeEntry>> watchAllSorted(SortOption sort) {
+    return _dao
+        .watchAllSorted(sort)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
   Stream<List<model.AnimeEntry>> watchByStatus(WatchStatus status) {
     return _dao
         .watchByStatus(status)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
+  Stream<List<model.AnimeEntry>> watchByStatusSorted(
+    WatchStatus status,
+    SortOption sort,
+  ) {
+    return _dao
+        .watchByStatusSorted(status, sort)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
+  Stream<List<model.AnimeEntry>> watchAllWithSearch(String query) {
+    return _dao
+        .watchAllWithSearch(query)
+        .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
+  }
+
+  Stream<List<model.AnimeEntry>> watchByStatusWithSearch(
+    WatchStatus status,
+    String query,
+  ) {
+    return _dao
+        .watchByStatusWithSearch(status, query)
         .map((rows) => rows.map(model.AnimeEntry.fromDbRow).toList());
   }
 
@@ -54,7 +84,15 @@ class AnimeRepository {
 
   Future<void> deleteEntry(String id) => _dao.deleteEntry(id);
 
+  Future<void> deleteEntries(List<String> ids) => _dao.deleteEntries(ids);
+
   Future<void> toggleFavorite(String id) => _dao.toggleFavorite(id);
+
+  Future<void> updateStatusBatch(List<String> ids, WatchStatus status) =>
+      _dao.updateStatusBatch(ids, status);
+
+  Future<void> setFavorites(List<String> ids, bool favorite) =>
+      _dao.toggleFavorites(ids, favorite);
 
   Future<Map<WatchStatus, int>> countByStatus() => _dao.countByStatus();
 }

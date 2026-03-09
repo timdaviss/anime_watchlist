@@ -12,6 +12,7 @@ final List<AnimeEntry> sampleAnime = [
         'After a failed alchemical ritual leaves brothers Edward and Alphonse Elric with devastating consequences, they embark on a journey to find the Philosopher\'s Stone to restore their bodies.',
     coverImageUrl: 'https://cdn.myanimelist.net/images/anime/1208/94745l.jpg',
     totalEpisodes: 64,
+    episodesWatched: 64,
     watchStatus: WatchStatus.completed,
     rating: 9.5,
     isFavorite: true,
@@ -29,6 +30,7 @@ final List<AnimeEntry> sampleAnime = [
         'A spy on an undercover mission gets married and adopts a child as part of his cover. His wife and daughter have secrets of their own.',
     coverImageUrl: 'https://cdn.myanimelist.net/images/anime/1441/124795l.jpg',
     totalEpisodes: 12,
+    episodesWatched: 8,
     watchStatus: WatchStatus.watching,
     rating: 8.0,
     genres: 'Action, Comedy, Slice of Life',
@@ -44,6 +46,7 @@ final List<AnimeEntry> sampleAnime = [
     synopsis:
         'Young Thorfinn grew up hearing tales of old sailors who had traversed the ocean and reached Vinland, a place of warmth and plenty.',
     totalEpisodes: 24,
+    episodesWatched: 0,
     watchStatus: WatchStatus.planToWatch,
     genres: 'Action, Adventure, Drama',
     source: AnimeSource.manual,

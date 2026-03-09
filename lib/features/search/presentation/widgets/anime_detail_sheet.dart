@@ -228,45 +228,68 @@ class _AnimeDetailSheetState extends ConsumerState<AnimeDetailSheet> {
       _isSaving = true;
     });
 
-    final now = DateTime.now();
-    // Use enriched detail data when available, fall back to search result
-    final result =
-        ref
-            .read(
-              animeSearchDetailProvider(
-                widget.result.sourceId,
-                widget.result.source,
+    try {
+      final now = DateTime.now();
+      // Use enriched detail data when available, fall back to search result
+      final result =
+          ref
+              .read(
+                animeSearchDetailProvider(
+                  widget.result.sourceId,
+                  widget.result.source,
+                ),
+              )
+              .value ??
+          widget.result;
+      final entry = AnimeEntry(
+        id: const Uuid().v4(),
+        title: result.title,
+        titleJapanese: result.titleJapanese,
+        synopsis: result.synopsis,
+        coverImageUrl: result.coverImageUrl,
+        totalEpisodes: result.totalEpisodes,
+        episodesWatched: 0,
+        watchStatus: watchStatus,
+        rating: null,
+        notes: null,
+        isFavorite: false,
+        genres: result.genres,
+        malId: result.source == AnimeSource.jikan ? result.sourceId : null,
+        anilistId: result.source == AnimeSource.anilist
+            ? result.sourceId
+            : null,
+        source: result.source,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      await ref.read(animeRepositoryProvider).insertEntry(entry);
+
+      ref.invalidate(isInLibraryProvider(result.sourceId, result.source));
+    } catch (e) {
+      if (mounted) {
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text('Error'),
+            content: const Text(
+              'Failed to save anime to library. Please try again.',
+            ),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
               ),
-            )
-            .value ??
-        widget.result;
-    final entry = AnimeEntry(
-      id: const Uuid().v4(),
-      title: result.title,
-      titleJapanese: result.titleJapanese,
-      synopsis: result.synopsis,
-      coverImageUrl: result.coverImageUrl,
-      totalEpisodes: result.totalEpisodes,
-      watchStatus: watchStatus,
-      rating: null,
-      notes: null,
-      isFavorite: false,
-      genres: result.genres,
-      malId: result.source == AnimeSource.jikan ? result.sourceId : null,
-      anilistId: result.source == AnimeSource.anilist ? result.sourceId : null,
-      source: result.source,
-      createdAt: now,
-      updatedAt: now,
-    );
-
-    await ref.read(animeRepositoryProvider).insertEntry(entry);
-
-    ref.invalidate(isInLibraryProvider(result.sourceId, result.source));
-
-    if (mounted) {
-      setState(() {
-        _isSaving = false;
-      });
+            ],
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
     }
   }
 }

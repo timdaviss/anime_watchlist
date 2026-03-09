@@ -16,6 +16,7 @@ class AnimeEntries extends Table {
   TextColumn get synopsis => text().nullable()();
   TextColumn get coverImageUrl => text().nullable()();
   IntColumn get totalEpisodes => integer().nullable()();
+  IntColumn get episodesWatched => integer().withDefault(const Constant(0))();
   TextColumn get watchStatus => textEnum<WatchStatus>()();
   RealColumn get rating => real().nullable().customConstraint(
     'CHECK (rating IS NULL OR (rating >= 1.0 AND rating <= 10.0))',
@@ -33,6 +34,16 @@ class AnimeEntries extends Table {
   Set<Column<Object>>? get primaryKey => {id};
 }
 
+class SearchCacheEntries extends Table {
+  TextColumn get query => text()();
+  TextColumn get source => textEnum<AnimeSource>()();
+  TextColumn get resultsJson => text()();
+  DateTimeColumn get cachedAt => dateTime()();
+
+  @override
+  Set<Column<Object>>? get primaryKey => {query, source};
+}
+
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -41,12 +52,27 @@ LazyDatabase _openConnection() {
   });
 }
 
-@DriftDatabase(tables: [AnimeEntries], daos: [AnimeEntriesDao])
+@DriftDatabase(
+  tables: [AnimeEntries, SearchCacheEntries],
+  daos: [AnimeEntriesDao, SearchCacheDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (migrator, from, to) async {
+        if (from < 2) {
+          await migrator.addColumn(animeEntries, animeEntries.episodesWatched);
+          await migrator.createTable(searchCacheEntries);
+        }
+      },
+    );
+  }
 }
 
 @DriftAccessor(tables: [AnimeEntries])
@@ -58,9 +84,54 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
     animeEntries,
   )..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)])).watch();
 
+  Stream<List<AnimeEntry>> watchAllSorted(SortOption sort) {
+    final query = select(animeEntries);
+    query.orderBy([_buildOrdering(sort)]);
+    return query.watch();
+  }
+
   Stream<List<AnimeEntry>> watchByStatus(WatchStatus status) {
     return (select(animeEntries)
           ..where((tbl) => tbl.watchStatus.equalsValue(status))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)]))
+        .watch();
+  }
+
+  Stream<List<AnimeEntry>> watchByStatusSorted(
+    WatchStatus status,
+    SortOption sort,
+  ) {
+    final query = select(animeEntries)
+      ..where((tbl) => tbl.watchStatus.equalsValue(status));
+    query.orderBy([_buildOrdering(sort)]);
+    return query.watch();
+  }
+
+  Stream<List<AnimeEntry>> watchAllWithSearch(String query) {
+    if (query.isEmpty) {
+      return watchAll();
+    }
+
+    return (select(animeEntries)
+          ..where((tbl) => tbl.title.like('%$query%'))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)]))
+        .watch();
+  }
+
+  Stream<List<AnimeEntry>> watchByStatusWithSearch(
+    WatchStatus status,
+    String query,
+  ) {
+    if (query.isEmpty) {
+      return watchByStatus(status);
+    }
+
+    return (select(animeEntries)
+          ..where(
+            (tbl) =>
+                tbl.watchStatus.equalsValue(status) &
+                tbl.title.like('%$query%'),
+          )
           ..orderBy([(tbl) => OrderingTerm.desc(tbl.updatedAt)]))
         .watch();
   }
@@ -97,8 +168,10 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<int> countAll() async {
-    final rows = await select(animeEntries).get();
-    return rows.length;
+    final countExp = animeEntries.id.count();
+    final query = selectOnly(animeEntries)..addColumns([countExp]);
+    final row = await query.getSingle();
+    return row.read(countExp)!;
   }
 
   Future<void> insertEntry(AnimeEntriesCompanion companion) async {
@@ -121,6 +194,13 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
     await (delete(animeEntries)..where((tbl) => tbl.id.equals(id))).go();
   }
 
+  Future<void> deleteEntries(List<String> ids) async {
+    if (ids.isEmpty) {
+      return;
+    }
+    await (delete(animeEntries)..where((tbl) => tbl.id.isIn(ids))).go();
+  }
+
   Future<void> toggleFavorite(String id) async {
     final entry = await getById(id);
     if (entry == null) {
@@ -134,12 +214,116 @@ class AnimeEntriesDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  Future<void> updateStatusBatch(List<String> ids, WatchStatus status) async {
+    if (ids.isEmpty) {
+      return;
+    }
+    await (update(animeEntries)..where((tbl) => tbl.id.isIn(ids))).write(
+      AnimeEntriesCompanion(
+        watchStatus: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<void> toggleFavorites(List<String> ids, bool favorite) async {
+    if (ids.isEmpty) {
+      return;
+    }
+    await (update(animeEntries)..where((tbl) => tbl.id.isIn(ids))).write(
+      AnimeEntriesCompanion(
+        isFavorite: Value(favorite),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   Future<Map<WatchStatus, int>> countByStatus() async {
-    final rows = await select(animeEntries).get();
+    final countExp = animeEntries.id.count();
+    final query = selectOnly(animeEntries)
+      ..addColumns([animeEntries.watchStatus, countExp])
+      ..groupBy([animeEntries.watchStatus]);
+    final rows = await query.get();
     final counts = <WatchStatus, int>{};
     for (final row in rows) {
-      counts.update(row.watchStatus, (value) => value + 1, ifAbsent: () => 1);
+      final statusString = row.read(animeEntries.watchStatus);
+      final count = row.read(countExp);
+      if (statusString != null && count != null) {
+        final status = $AnimeEntriesTable.$converterwatchStatus.fromSql(
+          statusString,
+        );
+        counts[status] = count;
+      }
     }
     return counts;
+  }
+
+  OrderingTerm Function($AnimeEntriesTable) _buildOrdering(SortOption sort) {
+    return switch (sort) {
+      SortOption.updatedAt => (tbl) => OrderingTerm.desc(tbl.updatedAt),
+      SortOption.title => (tbl) => OrderingTerm.asc(tbl.title),
+      SortOption.rating => (tbl) => OrderingTerm.desc(tbl.rating),
+      SortOption.createdAt => (tbl) => OrderingTerm.desc(tbl.createdAt),
+      SortOption.status => (tbl) => OrderingTerm.asc(tbl.watchStatus),
+    };
+  }
+}
+
+@DriftAccessor(tables: [SearchCacheEntries])
+class SearchCacheDao extends DatabaseAccessor<AppDatabase>
+    with _$SearchCacheDaoMixin {
+  SearchCacheDao(super.db);
+
+  Future<String?> getCachedResults(String query, AnimeSource source) async {
+    final normalizedQuery = query.toLowerCase().trim();
+    final result =
+        await (select(searchCacheEntries)..where(
+              (tbl) =>
+                  tbl.query.equals(normalizedQuery) &
+                  tbl.source.equalsValue(source),
+            ))
+            .getSingleOrNull();
+    return result?.resultsJson;
+  }
+
+  Future<void> cacheResults(
+    String query,
+    AnimeSource source,
+    String resultsJson,
+  ) async {
+    final normalizedQuery = query.toLowerCase().trim();
+    await into(searchCacheEntries).insertOnConflictUpdate(
+      SearchCacheEntriesCompanion(
+        query: Value(normalizedQuery),
+        source: Value(source),
+        resultsJson: Value(resultsJson),
+        cachedAt: Value(DateTime.now()),
+      ),
+    );
+    await _evictOldEntries();
+  }
+
+  Future<void> _evictOldEntries() async {
+    final allEntries = await (select(
+      searchCacheEntries,
+    )..orderBy([(tbl) => OrderingTerm.desc(tbl.cachedAt)])).get();
+
+    if (allEntries.length <= 100) {
+      return;
+    }
+
+    final toDelete = allEntries.sublist(100);
+    for (final entry in toDelete) {
+      await (delete(searchCacheEntries)..where(
+            (tbl) =>
+                tbl.query.equals(entry.query) &
+                tbl.source.equalsValue(entry.source),
+          ))
+          .go();
+    }
+  }
+
+  Future<void> clearCache() async {
+    await delete(searchCacheEntries).go();
   }
 }

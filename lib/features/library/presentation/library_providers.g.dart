@@ -61,6 +61,163 @@ abstract class _$SelectedStatus extends $Notifier<WatchStatus?> {
   }
 }
 
+@ProviderFor(SelectedSort)
+final selectedSortProvider = SelectedSortProvider._();
+
+final class SelectedSortProvider
+    extends $NotifierProvider<SelectedSort, SortOption> {
+  SelectedSortProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedSortProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedSortHash();
+
+  @$internal
+  @override
+  SelectedSort create() => SelectedSort();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SortOption value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SortOption>(value),
+    );
+  }
+}
+
+String _$selectedSortHash() => r'0f58d3cc487cef1911b206a4ab69939066313611';
+
+abstract class _$SelectedSort extends $Notifier<SortOption> {
+  SortOption build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<SortOption, SortOption>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SortOption, SortOption>,
+              SortOption,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(LibrarySearchQuery)
+final librarySearchQueryProvider = LibrarySearchQueryProvider._();
+
+final class LibrarySearchQueryProvider
+    extends $NotifierProvider<LibrarySearchQuery, String> {
+  LibrarySearchQueryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'librarySearchQueryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$librarySearchQueryHash();
+
+  @$internal
+  @override
+  LibrarySearchQuery create() => LibrarySearchQuery();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$librarySearchQueryHash() =>
+    r'578178065e259b6b4779e602ee686320326c3b6c';
+
+abstract class _$LibrarySearchQuery extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(SelectionMode)
+final selectionModeProvider = SelectionModeProvider._();
+
+final class SelectionModeProvider
+    extends $NotifierProvider<SelectionMode, Set<String>> {
+  SelectionModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectionModeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectionModeHash();
+
+  @$internal
+  @override
+  SelectionMode create() => SelectionMode();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Set<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<String>>(value),
+    );
+  }
+}
+
+String _$selectionModeHash() => r'9546aa8f6a98d77aed3908dc788790a114d1da9e';
+
+abstract class _$SelectionMode extends $Notifier<Set<String>> {
+  Set<String> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<Set<String>, Set<String>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Set<String>, Set<String>>,
+              Set<String>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(animeList)
 final animeListProvider = AnimeListProvider._();
 
@@ -98,7 +255,7 @@ final class AnimeListProvider
   }
 }
 
-String _$animeListHash() => r'ca9601ca1663ccb3eeb824649577f065993335e4';
+String _$animeListHash() => r'957e0d64bc486688c8ab8cdd8cf079923b54c214';
 
 @ProviderFor(animeDetail)
 final animeDetailProvider = AnimeDetailFamily._();

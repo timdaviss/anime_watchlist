@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AnimeEntry {
 
- String get id; String get title; String? get titleJapanese; String? get synopsis; String? get coverImageUrl; int? get totalEpisodes; WatchStatus get watchStatus; double? get rating; String? get notes; bool get isFavorite; String? get genres; int? get malId; int? get anilistId; AnimeSource get source; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get title; String? get titleJapanese; String? get synopsis; String? get coverImageUrl; int? get totalEpisodes; int get episodesWatched; WatchStatus get watchStatus; double? get rating; String? get notes; bool get isFavorite; String? get genres; int? get malId; int? get anilistId; AnimeSource get source; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of AnimeEntry
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AnimeEntryCopyWith<AnimeEntry> get copyWith => _$AnimeEntryCopyWithImpl<AnimeEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnimeEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.titleJapanese, titleJapanese) || other.titleJapanese == titleJapanese)&&(identical(other.synopsis, synopsis) || other.synopsis == synopsis)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.totalEpisodes, totalEpisodes) || other.totalEpisodes == totalEpisodes)&&(identical(other.watchStatus, watchStatus) || other.watchStatus == watchStatus)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.genres, genres) || other.genres == genres)&&(identical(other.malId, malId) || other.malId == malId)&&(identical(other.anilistId, anilistId) || other.anilistId == anilistId)&&(identical(other.source, source) || other.source == source)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnimeEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.titleJapanese, titleJapanese) || other.titleJapanese == titleJapanese)&&(identical(other.synopsis, synopsis) || other.synopsis == synopsis)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.totalEpisodes, totalEpisodes) || other.totalEpisodes == totalEpisodes)&&(identical(other.episodesWatched, episodesWatched) || other.episodesWatched == episodesWatched)&&(identical(other.watchStatus, watchStatus) || other.watchStatus == watchStatus)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.genres, genres) || other.genres == genres)&&(identical(other.malId, malId) || other.malId == malId)&&(identical(other.anilistId, anilistId) || other.anilistId == anilistId)&&(identical(other.source, source) || other.source == source)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,titleJapanese,synopsis,coverImageUrl,totalEpisodes,watchStatus,rating,notes,isFavorite,genres,malId,anilistId,source,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,title,titleJapanese,synopsis,coverImageUrl,totalEpisodes,episodesWatched,watchStatus,rating,notes,isFavorite,genres,malId,anilistId,source,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'AnimeEntry(id: $id, title: $title, titleJapanese: $titleJapanese, synopsis: $synopsis, coverImageUrl: $coverImageUrl, totalEpisodes: $totalEpisodes, watchStatus: $watchStatus, rating: $rating, notes: $notes, isFavorite: $isFavorite, genres: $genres, malId: $malId, anilistId: $anilistId, source: $source, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'AnimeEntry(id: $id, title: $title, titleJapanese: $titleJapanese, synopsis: $synopsis, coverImageUrl: $coverImageUrl, totalEpisodes: $totalEpisodes, episodesWatched: $episodesWatched, watchStatus: $watchStatus, rating: $rating, notes: $notes, isFavorite: $isFavorite, genres: $genres, malId: $malId, anilistId: $anilistId, source: $source, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AnimeEntryCopyWith<$Res>  {
   factory $AnimeEntryCopyWith(AnimeEntry value, $Res Function(AnimeEntry) _then) = _$AnimeEntryCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? titleJapanese, String? synopsis, String? coverImageUrl, int? totalEpisodes, WatchStatus watchStatus, double? rating, String? notes, bool isFavorite, String? genres, int? malId, int? anilistId, AnimeSource source, DateTime createdAt, DateTime updatedAt
+ String id, String title, String? titleJapanese, String? synopsis, String? coverImageUrl, int? totalEpisodes, int episodesWatched, WatchStatus watchStatus, double? rating, String? notes, bool isFavorite, String? genres, int? malId, int? anilistId, AnimeSource source, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$AnimeEntryCopyWithImpl<$Res>
 
 /// Create a copy of AnimeEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? titleJapanese = freezed,Object? synopsis = freezed,Object? coverImageUrl = freezed,Object? totalEpisodes = freezed,Object? watchStatus = null,Object? rating = freezed,Object? notes = freezed,Object? isFavorite = null,Object? genres = freezed,Object? malId = freezed,Object? anilistId = freezed,Object? source = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? titleJapanese = freezed,Object? synopsis = freezed,Object? coverImageUrl = freezed,Object? totalEpisodes = freezed,Object? episodesWatched = null,Object? watchStatus = null,Object? rating = freezed,Object? notes = freezed,Object? isFavorite = null,Object? genres = freezed,Object? malId = freezed,Object? anilistId = freezed,Object? source = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as String,titleJapanese: freezed == titleJapanese ? _self.titleJapanese : titleJ
 as String?,synopsis: freezed == synopsis ? _self.synopsis : synopsis // ignore: cast_nullable_to_non_nullable
 as String?,coverImageUrl: freezed == coverImageUrl ? _self.coverImageUrl : coverImageUrl // ignore: cast_nullable_to_non_nullable
 as String?,totalEpisodes: freezed == totalEpisodes ? _self.totalEpisodes : totalEpisodes // ignore: cast_nullable_to_non_nullable
-as int?,watchStatus: null == watchStatus ? _self.watchStatus : watchStatus // ignore: cast_nullable_to_non_nullable
+as int?,episodesWatched: null == episodesWatched ? _self.episodesWatched : episodesWatched // ignore: cast_nullable_to_non_nullable
+as int,watchStatus: null == watchStatus ? _self.watchStatus : watchStatus // ignore: cast_nullable_to_non_nullable
 as WatchStatus,rating: freezed == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
 as double?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
@@ -168,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? titleJapanese,  String? synopsis,  String? coverImageUrl,  int? totalEpisodes,  WatchStatus watchStatus,  double? rating,  String? notes,  bool isFavorite,  String? genres,  int? malId,  int? anilistId,  AnimeSource source,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? titleJapanese,  String? synopsis,  String? coverImageUrl,  int? totalEpisodes,  int episodesWatched,  WatchStatus watchStatus,  double? rating,  String? notes,  bool isFavorite,  String? genres,  int? malId,  int? anilistId,  AnimeSource source,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AnimeEntry() when $default != null:
-return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.coverImageUrl,_that.totalEpisodes,_that.watchStatus,_that.rating,_that.notes,_that.isFavorite,_that.genres,_that.malId,_that.anilistId,_that.source,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.coverImageUrl,_that.totalEpisodes,_that.episodesWatched,_that.watchStatus,_that.rating,_that.notes,_that.isFavorite,_that.genres,_that.malId,_that.anilistId,_that.source,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -189,10 +190,10 @@ return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.co
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? titleJapanese,  String? synopsis,  String? coverImageUrl,  int? totalEpisodes,  WatchStatus watchStatus,  double? rating,  String? notes,  bool isFavorite,  String? genres,  int? malId,  int? anilistId,  AnimeSource source,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? titleJapanese,  String? synopsis,  String? coverImageUrl,  int? totalEpisodes,  int episodesWatched,  WatchStatus watchStatus,  double? rating,  String? notes,  bool isFavorite,  String? genres,  int? malId,  int? anilistId,  AnimeSource source,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _AnimeEntry():
-return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.coverImageUrl,_that.totalEpisodes,_that.watchStatus,_that.rating,_that.notes,_that.isFavorite,_that.genres,_that.malId,_that.anilistId,_that.source,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.coverImageUrl,_that.totalEpisodes,_that.episodesWatched,_that.watchStatus,_that.rating,_that.notes,_that.isFavorite,_that.genres,_that.malId,_that.anilistId,_that.source,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +210,10 @@ return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.co
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? titleJapanese,  String? synopsis,  String? coverImageUrl,  int? totalEpisodes,  WatchStatus watchStatus,  double? rating,  String? notes,  bool isFavorite,  String? genres,  int? malId,  int? anilistId,  AnimeSource source,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? titleJapanese,  String? synopsis,  String? coverImageUrl,  int? totalEpisodes,  int episodesWatched,  WatchStatus watchStatus,  double? rating,  String? notes,  bool isFavorite,  String? genres,  int? malId,  int? anilistId,  AnimeSource source,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AnimeEntry() when $default != null:
-return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.coverImageUrl,_that.totalEpisodes,_that.watchStatus,_that.rating,_that.notes,_that.isFavorite,_that.genres,_that.malId,_that.anilistId,_that.source,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.coverImageUrl,_that.totalEpisodes,_that.episodesWatched,_that.watchStatus,_that.rating,_that.notes,_that.isFavorite,_that.genres,_that.malId,_that.anilistId,_that.source,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -224,7 +225,7 @@ return $default(_that.id,_that.title,_that.titleJapanese,_that.synopsis,_that.co
 @JsonSerializable()
 
 class _AnimeEntry extends AnimeEntry {
-  const _AnimeEntry({required this.id, required this.title, this.titleJapanese, this.synopsis, this.coverImageUrl, this.totalEpisodes, required this.watchStatus, this.rating, this.notes, this.isFavorite = false, this.genres, this.malId, this.anilistId, required this.source, required this.createdAt, required this.updatedAt}): super._();
+  const _AnimeEntry({required this.id, required this.title, this.titleJapanese, this.synopsis, this.coverImageUrl, this.totalEpisodes, this.episodesWatched = 0, required this.watchStatus, this.rating, this.notes, this.isFavorite = false, this.genres, this.malId, this.anilistId, required this.source, required this.createdAt, required this.updatedAt}): super._();
   factory _AnimeEntry.fromJson(Map<String, dynamic> json) => _$AnimeEntryFromJson(json);
 
 @override final  String id;
@@ -233,6 +234,7 @@ class _AnimeEntry extends AnimeEntry {
 @override final  String? synopsis;
 @override final  String? coverImageUrl;
 @override final  int? totalEpisodes;
+@override@JsonKey() final  int episodesWatched;
 @override final  WatchStatus watchStatus;
 @override final  double? rating;
 @override final  String? notes;
@@ -257,16 +259,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnimeEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.titleJapanese, titleJapanese) || other.titleJapanese == titleJapanese)&&(identical(other.synopsis, synopsis) || other.synopsis == synopsis)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.totalEpisodes, totalEpisodes) || other.totalEpisodes == totalEpisodes)&&(identical(other.watchStatus, watchStatus) || other.watchStatus == watchStatus)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.genres, genres) || other.genres == genres)&&(identical(other.malId, malId) || other.malId == malId)&&(identical(other.anilistId, anilistId) || other.anilistId == anilistId)&&(identical(other.source, source) || other.source == source)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnimeEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.titleJapanese, titleJapanese) || other.titleJapanese == titleJapanese)&&(identical(other.synopsis, synopsis) || other.synopsis == synopsis)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.totalEpisodes, totalEpisodes) || other.totalEpisodes == totalEpisodes)&&(identical(other.episodesWatched, episodesWatched) || other.episodesWatched == episodesWatched)&&(identical(other.watchStatus, watchStatus) || other.watchStatus == watchStatus)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.genres, genres) || other.genres == genres)&&(identical(other.malId, malId) || other.malId == malId)&&(identical(other.anilistId, anilistId) || other.anilistId == anilistId)&&(identical(other.source, source) || other.source == source)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,titleJapanese,synopsis,coverImageUrl,totalEpisodes,watchStatus,rating,notes,isFavorite,genres,malId,anilistId,source,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,title,titleJapanese,synopsis,coverImageUrl,totalEpisodes,episodesWatched,watchStatus,rating,notes,isFavorite,genres,malId,anilistId,source,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'AnimeEntry(id: $id, title: $title, titleJapanese: $titleJapanese, synopsis: $synopsis, coverImageUrl: $coverImageUrl, totalEpisodes: $totalEpisodes, watchStatus: $watchStatus, rating: $rating, notes: $notes, isFavorite: $isFavorite, genres: $genres, malId: $malId, anilistId: $anilistId, source: $source, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'AnimeEntry(id: $id, title: $title, titleJapanese: $titleJapanese, synopsis: $synopsis, coverImageUrl: $coverImageUrl, totalEpisodes: $totalEpisodes, episodesWatched: $episodesWatched, watchStatus: $watchStatus, rating: $rating, notes: $notes, isFavorite: $isFavorite, genres: $genres, malId: $malId, anilistId: $anilistId, source: $source, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -277,7 +279,7 @@ abstract mixin class _$AnimeEntryCopyWith<$Res> implements $AnimeEntryCopyWith<$
   factory _$AnimeEntryCopyWith(_AnimeEntry value, $Res Function(_AnimeEntry) _then) = __$AnimeEntryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? titleJapanese, String? synopsis, String? coverImageUrl, int? totalEpisodes, WatchStatus watchStatus, double? rating, String? notes, bool isFavorite, String? genres, int? malId, int? anilistId, AnimeSource source, DateTime createdAt, DateTime updatedAt
+ String id, String title, String? titleJapanese, String? synopsis, String? coverImageUrl, int? totalEpisodes, int episodesWatched, WatchStatus watchStatus, double? rating, String? notes, bool isFavorite, String? genres, int? malId, int? anilistId, AnimeSource source, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -294,7 +296,7 @@ class __$AnimeEntryCopyWithImpl<$Res>
 
 /// Create a copy of AnimeEntry
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? titleJapanese = freezed,Object? synopsis = freezed,Object? coverImageUrl = freezed,Object? totalEpisodes = freezed,Object? watchStatus = null,Object? rating = freezed,Object? notes = freezed,Object? isFavorite = null,Object? genres = freezed,Object? malId = freezed,Object? anilistId = freezed,Object? source = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? titleJapanese = freezed,Object? synopsis = freezed,Object? coverImageUrl = freezed,Object? totalEpisodes = freezed,Object? episodesWatched = null,Object? watchStatus = null,Object? rating = freezed,Object? notes = freezed,Object? isFavorite = null,Object? genres = freezed,Object? malId = freezed,Object? anilistId = freezed,Object? source = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_AnimeEntry(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -302,7 +304,8 @@ as String,titleJapanese: freezed == titleJapanese ? _self.titleJapanese : titleJ
 as String?,synopsis: freezed == synopsis ? _self.synopsis : synopsis // ignore: cast_nullable_to_non_nullable
 as String?,coverImageUrl: freezed == coverImageUrl ? _self.coverImageUrl : coverImageUrl // ignore: cast_nullable_to_non_nullable
 as String?,totalEpisodes: freezed == totalEpisodes ? _self.totalEpisodes : totalEpisodes // ignore: cast_nullable_to_non_nullable
-as int?,watchStatus: null == watchStatus ? _self.watchStatus : watchStatus // ignore: cast_nullable_to_non_nullable
+as int?,episodesWatched: null == episodesWatched ? _self.episodesWatched : episodesWatched // ignore: cast_nullable_to_non_nullable
+as int,watchStatus: null == watchStatus ? _self.watchStatus : watchStatus // ignore: cast_nullable_to_non_nullable
 as WatchStatus,rating: freezed == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
 as double?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable

@@ -31,6 +31,7 @@ class AniListApi {
   static const String _searchQuery = r'''
     query SearchAnime($search: String, $page: Int, $perPage: Int) {
       Page(page: $page, perPage: $perPage) {
+        pageInfo { hasNextPage }
         media(search: $search, type: ANIME, sort: SEARCH_MATCH) {
           id
           title { romaji english native }
@@ -64,14 +65,15 @@ class AniListApi {
     return AniListAnimeDto.fromJson(media);
   }
 
-  Future<List<AniListAnimeDto>> searchAnime(
+  Future<({List<AniListAnimeDto> data, bool hasNextPage})> searchAnime(
     String query, {
     int perPage = 20,
+    int page = 1,
   }) async {
     final result = await _client.query(
       QueryOptions(
         document: gql(_searchQuery),
-        variables: {'search': query, 'page': 1, 'perPage': perPage},
+        variables: {'search': query, 'page': page, 'perPage': perPage},
       ),
     );
 
@@ -80,11 +82,16 @@ class AniListApi {
     }
 
     final data = result.data ?? const <String, dynamic>{};
-    final page = data['Page'] as Map<String, dynamic>? ?? const {};
-    final media = page['media'] as List<dynamic>? ?? const [];
+    final pageData = data['Page'] as Map<String, dynamic>? ?? const {};
+    final pageInfo = pageData['pageInfo'] as Map<String, dynamic>?;
+    final hasNextPage = pageInfo?['hasNextPage'] as bool? ?? false;
+    final media = pageData['media'] as List<dynamic>? ?? const [];
 
-    return media
-        .map((item) => AniListAnimeDto.fromJson(item as Map<String, dynamic>))
-        .toList();
+    return (
+      data: media
+          .map((item) => AniListAnimeDto.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      hasNextPage: hasNextPage,
+    );
   }
 }

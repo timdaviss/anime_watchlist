@@ -33,7 +33,7 @@ final class SearchNotifierProvider
   SearchNotifier create() => SearchNotifier();
 }
 
-String _$searchNotifierHash() => r'f0e7c247345e4262bf262c4665ae7d8ae30ba070';
+String _$searchNotifierHash() => r'f840011f6dee23fa9826965c2c68150ee8a53db9';
 
 abstract class _$SearchNotifier
     extends $AsyncNotifier<List<AnimeSearchResult>> {
@@ -61,6 +61,39 @@ abstract class _$SearchNotifier
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(libraryRevision)
+final libraryRevisionProvider = LibraryRevisionProvider._();
+
+final class LibraryRevisionProvider
+    extends $FunctionalProvider<AsyncValue<int>, int, Stream<int>>
+    with $FutureModifier<int>, $StreamProvider<int> {
+  LibraryRevisionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'libraryRevisionProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$libraryRevisionHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<int> create(Ref ref) {
+    return libraryRevision(ref);
+  }
+}
+
+String _$libraryRevisionHash() => r'd19197a11197e5346d1da7529ec1f1ce3667867d';
 
 @ProviderFor(animeSearchDetail)
 final animeSearchDetailProvider = AnimeSearchDetailFamily._();
@@ -199,7 +232,7 @@ final class IsInLibraryProvider
   }
 }
 
-String _$isInLibraryHash() => r'c60db72c8b07b565fb76cdee3c2426dfbf2b4800';
+String _$isInLibraryHash() => r'4eaf076aabbd4a38e06bdbf1da194e32fc50c34e';
 
 final class IsInLibraryFamily extends $Family
     with
