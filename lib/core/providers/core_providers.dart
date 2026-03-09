@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/library/data/anime_repository.dart';
 import '../../features/search/data/anime_search_repository.dart';
+import '../../features/search/data/search_cache_service.dart';
 import '../database/app_database.dart';
 import '../network/anilist_api.dart';
 import '../network/api_client.dart';
@@ -52,4 +53,16 @@ AnimeSearchRepository animeSearchRepository(Ref ref) {
     jikanApi: ref.watch(jikanApiProvider),
     aniListApi: ref.watch(aniListApiProvider),
   );
+}
+
+@riverpod
+SearchCacheDao searchCacheDao(Ref ref) {
+  final db = ref.watch(databaseProvider);
+  return SearchCacheDao(db);
+}
+
+@riverpod
+SearchCacheService searchCacheService(Ref ref) {
+  final dao = ref.watch(searchCacheDaoProvider);
+  return SearchCacheService(dao);
 }

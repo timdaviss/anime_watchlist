@@ -16,6 +16,16 @@ class SelectedStatus extends _$SelectedStatus {
 }
 
 @riverpod
+class SelectedSort extends _$SelectedSort {
+  @override
+  SortOption build() => SortOption.updatedAt;
+
+  void setSort(SortOption sort) {
+    state = sort;
+  }
+}
+
+@riverpod
 class LibrarySearchQuery extends _$LibrarySearchQuery {
   @override
   String build() => '';
@@ -26,16 +36,51 @@ class LibrarySearchQuery extends _$LibrarySearchQuery {
 }
 
 @riverpod
+class SelectionMode extends _$SelectionMode {
+  @override
+  Set<String> build() => {};
+
+  void toggle(String id) {
+    if (state.contains(id)) {
+      final next = {...state};
+      next.remove(id);
+      state = next;
+    } else {
+      state = {...state, id};
+    }
+  }
+
+  void selectAll(List<String> ids) {
+    state = {...ids};
+  }
+
+  void clear() {
+    state = {};
+  }
+}
+
+@riverpod
 Stream<List<AnimeEntry>> animeList(Ref ref) {
   final repository = ref.watch(animeRepositoryProvider);
   final status = ref.watch(selectedStatusProvider);
+  final sort = ref.watch(selectedSortProvider);
   final query = ref.watch(librarySearchQueryProvider).trim().toLowerCase();
 
+  Stream<List<AnimeEntry>> stream;
   if (status == null) {
-    return repository.watchAllWithSearch(query);
+    stream = repository.watchAllSorted(sort);
   } else {
-    return repository.watchByStatusWithSearch(status, query);
+    stream = repository.watchByStatusSorted(status, sort);
   }
+
+  if (query.isNotEmpty) {
+    stream = stream.map(
+      (entries) =>
+          entries.where((e) => e.title.toLowerCase().contains(query)).toList(),
+    );
+  }
+
+  return stream;
 }
 
 @riverpod

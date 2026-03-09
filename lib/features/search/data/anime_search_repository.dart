@@ -15,19 +15,26 @@ class AnimeSearchRepository {
   final JikanApi _jikanApi;
   final AniListApi _aniListApi;
 
-  Future<List<AnimeSearchResult>> search(
+  Future<({List<AnimeSearchResult> results, bool hasNextPage})> search(
     String query, {
     AnimeSource source = AnimeSource.jikan,
+    int page = 1,
   }) async {
     switch (source) {
       case AnimeSource.jikan:
-        final results = await _jikanApi.searchAnime(query);
-        return results.map(_fromJikan).toList();
+        final result = await _jikanApi.searchAnime(query, page: page);
+        return (
+          results: result.data.map(_fromJikan).toList(),
+          hasNextPage: result.hasNextPage,
+        );
       case AnimeSource.anilist:
-        final results = await _aniListApi.searchAnime(query);
-        return results.map(_fromAniList).toList();
+        final result = await _aniListApi.searchAnime(query, page: page);
+        return (
+          results: result.data.map(_fromAniList).toList(),
+          hasNextPage: result.hasNextPage,
+        );
       case AnimeSource.manual:
-        return const [];
+        return (results: const <AnimeSearchResult>[], hasNextPage: false);
     }
   }
 

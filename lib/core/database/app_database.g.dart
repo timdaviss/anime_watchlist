@@ -71,6 +71,18 @@ class $AnimeEntriesTable extends AnimeEntries
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _episodesWatchedMeta = const VerificationMeta(
+    'episodesWatched',
+  );
+  @override
+  late final GeneratedColumn<int> episodesWatched = GeneratedColumn<int>(
+    'episodes_watched',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<WatchStatus, String> watchStatus =
       GeneratedColumn<String>(
@@ -183,6 +195,7 @@ class $AnimeEntriesTable extends AnimeEntries
     synopsis,
     coverImageUrl,
     totalEpisodes,
+    episodesWatched,
     watchStatus,
     rating,
     notes,
@@ -249,6 +262,15 @@ class $AnimeEntriesTable extends AnimeEntries
         totalEpisodes.isAcceptableOrUnknown(
           data['total_episodes']!,
           _totalEpisodesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('episodes_watched')) {
+      context.handle(
+        _episodesWatchedMeta,
+        episodesWatched.isAcceptableOrUnknown(
+          data['episodes_watched']!,
+          _episodesWatchedMeta,
         ),
       );
     }
@@ -337,6 +359,10 @@ class $AnimeEntriesTable extends AnimeEntries
         DriftSqlType.int,
         data['${effectivePrefix}total_episodes'],
       ),
+      episodesWatched: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}episodes_watched'],
+      )!,
       watchStatus: $AnimeEntriesTable.$converterwatchStatus.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
@@ -402,6 +428,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
   final String? synopsis;
   final String? coverImageUrl;
   final int? totalEpisodes;
+  final int episodesWatched;
   final WatchStatus watchStatus;
   final double? rating;
   final String? notes;
@@ -419,6 +446,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     this.synopsis,
     this.coverImageUrl,
     this.totalEpisodes,
+    required this.episodesWatched,
     required this.watchStatus,
     this.rating,
     this.notes,
@@ -447,6 +475,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     if (!nullToAbsent || totalEpisodes != null) {
       map['total_episodes'] = Variable<int>(totalEpisodes);
     }
+    map['episodes_watched'] = Variable<int>(episodesWatched);
     {
       map['watch_status'] = Variable<String>(
         $AnimeEntriesTable.$converterwatchStatus.toSql(watchStatus),
@@ -494,6 +523,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       totalEpisodes: totalEpisodes == null && nullToAbsent
           ? const Value.absent()
           : Value(totalEpisodes),
+      episodesWatched: Value(episodesWatched),
       watchStatus: Value(watchStatus),
       rating: rating == null && nullToAbsent
           ? const Value.absent()
@@ -529,6 +559,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       synopsis: serializer.fromJson<String?>(json['synopsis']),
       coverImageUrl: serializer.fromJson<String?>(json['coverImageUrl']),
       totalEpisodes: serializer.fromJson<int?>(json['totalEpisodes']),
+      episodesWatched: serializer.fromJson<int>(json['episodesWatched']),
       watchStatus: $AnimeEntriesTable.$converterwatchStatus.fromJson(
         serializer.fromJson<String>(json['watchStatus']),
       ),
@@ -555,6 +586,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       'synopsis': serializer.toJson<String?>(synopsis),
       'coverImageUrl': serializer.toJson<String?>(coverImageUrl),
       'totalEpisodes': serializer.toJson<int?>(totalEpisodes),
+      'episodesWatched': serializer.toJson<int>(episodesWatched),
       'watchStatus': serializer.toJson<String>(
         $AnimeEntriesTable.$converterwatchStatus.toJson(watchStatus),
       ),
@@ -579,6 +611,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     Value<String?> synopsis = const Value.absent(),
     Value<String?> coverImageUrl = const Value.absent(),
     Value<int?> totalEpisodes = const Value.absent(),
+    int? episodesWatched,
     WatchStatus? watchStatus,
     Value<double?> rating = const Value.absent(),
     Value<String?> notes = const Value.absent(),
@@ -602,6 +635,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     totalEpisodes: totalEpisodes.present
         ? totalEpisodes.value
         : this.totalEpisodes,
+    episodesWatched: episodesWatched ?? this.episodesWatched,
     watchStatus: watchStatus ?? this.watchStatus,
     rating: rating.present ? rating.value : this.rating,
     notes: notes.present ? notes.value : this.notes,
@@ -627,6 +661,9 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
       totalEpisodes: data.totalEpisodes.present
           ? data.totalEpisodes.value
           : this.totalEpisodes,
+      episodesWatched: data.episodesWatched.present
+          ? data.episodesWatched.value
+          : this.episodesWatched,
       watchStatus: data.watchStatus.present
           ? data.watchStatus.value
           : this.watchStatus,
@@ -653,6 +690,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
           ..write('synopsis: $synopsis, ')
           ..write('coverImageUrl: $coverImageUrl, ')
           ..write('totalEpisodes: $totalEpisodes, ')
+          ..write('episodesWatched: $episodesWatched, ')
           ..write('watchStatus: $watchStatus, ')
           ..write('rating: $rating, ')
           ..write('notes: $notes, ')
@@ -675,6 +713,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
     synopsis,
     coverImageUrl,
     totalEpisodes,
+    episodesWatched,
     watchStatus,
     rating,
     notes,
@@ -696,6 +735,7 @@ class AnimeEntry extends DataClass implements Insertable<AnimeEntry> {
           other.synopsis == this.synopsis &&
           other.coverImageUrl == this.coverImageUrl &&
           other.totalEpisodes == this.totalEpisodes &&
+          other.episodesWatched == this.episodesWatched &&
           other.watchStatus == this.watchStatus &&
           other.rating == this.rating &&
           other.notes == this.notes &&
@@ -715,6 +755,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
   final Value<String?> synopsis;
   final Value<String?> coverImageUrl;
   final Value<int?> totalEpisodes;
+  final Value<int> episodesWatched;
   final Value<WatchStatus> watchStatus;
   final Value<double?> rating;
   final Value<String?> notes;
@@ -733,6 +774,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     this.synopsis = const Value.absent(),
     this.coverImageUrl = const Value.absent(),
     this.totalEpisodes = const Value.absent(),
+    this.episodesWatched = const Value.absent(),
     this.watchStatus = const Value.absent(),
     this.rating = const Value.absent(),
     this.notes = const Value.absent(),
@@ -752,6 +794,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     this.synopsis = const Value.absent(),
     this.coverImageUrl = const Value.absent(),
     this.totalEpisodes = const Value.absent(),
+    this.episodesWatched = const Value.absent(),
     required WatchStatus watchStatus,
     this.rating = const Value.absent(),
     this.notes = const Value.absent(),
@@ -776,6 +819,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     Expression<String>? synopsis,
     Expression<String>? coverImageUrl,
     Expression<int>? totalEpisodes,
+    Expression<int>? episodesWatched,
     Expression<String>? watchStatus,
     Expression<double>? rating,
     Expression<String>? notes,
@@ -795,6 +839,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
       if (synopsis != null) 'synopsis': synopsis,
       if (coverImageUrl != null) 'cover_image_url': coverImageUrl,
       if (totalEpisodes != null) 'total_episodes': totalEpisodes,
+      if (episodesWatched != null) 'episodes_watched': episodesWatched,
       if (watchStatus != null) 'watch_status': watchStatus,
       if (rating != null) 'rating': rating,
       if (notes != null) 'notes': notes,
@@ -816,6 +861,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     Value<String?>? synopsis,
     Value<String?>? coverImageUrl,
     Value<int?>? totalEpisodes,
+    Value<int>? episodesWatched,
     Value<WatchStatus>? watchStatus,
     Value<double?>? rating,
     Value<String?>? notes,
@@ -835,6 +881,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
       synopsis: synopsis ?? this.synopsis,
       coverImageUrl: coverImageUrl ?? this.coverImageUrl,
       totalEpisodes: totalEpisodes ?? this.totalEpisodes,
+      episodesWatched: episodesWatched ?? this.episodesWatched,
       watchStatus: watchStatus ?? this.watchStatus,
       rating: rating ?? this.rating,
       notes: notes ?? this.notes,
@@ -869,6 +916,9 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
     }
     if (totalEpisodes.present) {
       map['total_episodes'] = Variable<int>(totalEpisodes.value);
+    }
+    if (episodesWatched.present) {
+      map['episodes_watched'] = Variable<int>(episodesWatched.value);
     }
     if (watchStatus.present) {
       map['watch_status'] = Variable<String>(
@@ -919,6 +969,7 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
           ..write('synopsis: $synopsis, ')
           ..write('coverImageUrl: $coverImageUrl, ')
           ..write('totalEpisodes: $totalEpisodes, ')
+          ..write('episodesWatched: $episodesWatched, ')
           ..write('watchStatus: $watchStatus, ')
           ..write('rating: $rating, ')
           ..write('notes: $notes, ')
@@ -935,18 +986,350 @@ class AnimeEntriesCompanion extends UpdateCompanion<AnimeEntry> {
   }
 }
 
+class $SearchCacheEntriesTable extends SearchCacheEntries
+    with TableInfo<$SearchCacheEntriesTable, SearchCacheEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SearchCacheEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _queryMeta = const VerificationMeta('query');
+  @override
+  late final GeneratedColumn<String> query = GeneratedColumn<String>(
+    'query',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<AnimeSource, String> source =
+      GeneratedColumn<String>(
+        'source',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<AnimeSource>($SearchCacheEntriesTable.$convertersource);
+  static const VerificationMeta _resultsJsonMeta = const VerificationMeta(
+    'resultsJson',
+  );
+  @override
+  late final GeneratedColumn<String> resultsJson = GeneratedColumn<String>(
+    'results_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cachedAtMeta = const VerificationMeta(
+    'cachedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cachedAt = GeneratedColumn<DateTime>(
+    'cached_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [query, source, resultsJson, cachedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'search_cache_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SearchCacheEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('query')) {
+      context.handle(
+        _queryMeta,
+        query.isAcceptableOrUnknown(data['query']!, _queryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_queryMeta);
+    }
+    if (data.containsKey('results_json')) {
+      context.handle(
+        _resultsJsonMeta,
+        resultsJson.isAcceptableOrUnknown(
+          data['results_json']!,
+          _resultsJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_resultsJsonMeta);
+    }
+    if (data.containsKey('cached_at')) {
+      context.handle(
+        _cachedAtMeta,
+        cachedAt.isAcceptableOrUnknown(data['cached_at']!, _cachedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cachedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {query, source};
+  @override
+  SearchCacheEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SearchCacheEntry(
+      query: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}query'],
+      )!,
+      source: $SearchCacheEntriesTable.$convertersource.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}source'],
+        )!,
+      ),
+      resultsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}results_json'],
+      )!,
+      cachedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cached_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SearchCacheEntriesTable createAlias(String alias) {
+    return $SearchCacheEntriesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<AnimeSource, String, String> $convertersource =
+      const EnumNameConverter<AnimeSource>(AnimeSource.values);
+}
+
+class SearchCacheEntry extends DataClass
+    implements Insertable<SearchCacheEntry> {
+  final String query;
+  final AnimeSource source;
+  final String resultsJson;
+  final DateTime cachedAt;
+  const SearchCacheEntry({
+    required this.query,
+    required this.source,
+    required this.resultsJson,
+    required this.cachedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['query'] = Variable<String>(query);
+    {
+      map['source'] = Variable<String>(
+        $SearchCacheEntriesTable.$convertersource.toSql(source),
+      );
+    }
+    map['results_json'] = Variable<String>(resultsJson);
+    map['cached_at'] = Variable<DateTime>(cachedAt);
+    return map;
+  }
+
+  SearchCacheEntriesCompanion toCompanion(bool nullToAbsent) {
+    return SearchCacheEntriesCompanion(
+      query: Value(query),
+      source: Value(source),
+      resultsJson: Value(resultsJson),
+      cachedAt: Value(cachedAt),
+    );
+  }
+
+  factory SearchCacheEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SearchCacheEntry(
+      query: serializer.fromJson<String>(json['query']),
+      source: $SearchCacheEntriesTable.$convertersource.fromJson(
+        serializer.fromJson<String>(json['source']),
+      ),
+      resultsJson: serializer.fromJson<String>(json['resultsJson']),
+      cachedAt: serializer.fromJson<DateTime>(json['cachedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'query': serializer.toJson<String>(query),
+      'source': serializer.toJson<String>(
+        $SearchCacheEntriesTable.$convertersource.toJson(source),
+      ),
+      'resultsJson': serializer.toJson<String>(resultsJson),
+      'cachedAt': serializer.toJson<DateTime>(cachedAt),
+    };
+  }
+
+  SearchCacheEntry copyWith({
+    String? query,
+    AnimeSource? source,
+    String? resultsJson,
+    DateTime? cachedAt,
+  }) => SearchCacheEntry(
+    query: query ?? this.query,
+    source: source ?? this.source,
+    resultsJson: resultsJson ?? this.resultsJson,
+    cachedAt: cachedAt ?? this.cachedAt,
+  );
+  SearchCacheEntry copyWithCompanion(SearchCacheEntriesCompanion data) {
+    return SearchCacheEntry(
+      query: data.query.present ? data.query.value : this.query,
+      source: data.source.present ? data.source.value : this.source,
+      resultsJson: data.resultsJson.present
+          ? data.resultsJson.value
+          : this.resultsJson,
+      cachedAt: data.cachedAt.present ? data.cachedAt.value : this.cachedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SearchCacheEntry(')
+          ..write('query: $query, ')
+          ..write('source: $source, ')
+          ..write('resultsJson: $resultsJson, ')
+          ..write('cachedAt: $cachedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(query, source, resultsJson, cachedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SearchCacheEntry &&
+          other.query == this.query &&
+          other.source == this.source &&
+          other.resultsJson == this.resultsJson &&
+          other.cachedAt == this.cachedAt);
+}
+
+class SearchCacheEntriesCompanion extends UpdateCompanion<SearchCacheEntry> {
+  final Value<String> query;
+  final Value<AnimeSource> source;
+  final Value<String> resultsJson;
+  final Value<DateTime> cachedAt;
+  final Value<int> rowid;
+  const SearchCacheEntriesCompanion({
+    this.query = const Value.absent(),
+    this.source = const Value.absent(),
+    this.resultsJson = const Value.absent(),
+    this.cachedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SearchCacheEntriesCompanion.insert({
+    required String query,
+    required AnimeSource source,
+    required String resultsJson,
+    required DateTime cachedAt,
+    this.rowid = const Value.absent(),
+  }) : query = Value(query),
+       source = Value(source),
+       resultsJson = Value(resultsJson),
+       cachedAt = Value(cachedAt);
+  static Insertable<SearchCacheEntry> custom({
+    Expression<String>? query,
+    Expression<String>? source,
+    Expression<String>? resultsJson,
+    Expression<DateTime>? cachedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (query != null) 'query': query,
+      if (source != null) 'source': source,
+      if (resultsJson != null) 'results_json': resultsJson,
+      if (cachedAt != null) 'cached_at': cachedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SearchCacheEntriesCompanion copyWith({
+    Value<String>? query,
+    Value<AnimeSource>? source,
+    Value<String>? resultsJson,
+    Value<DateTime>? cachedAt,
+    Value<int>? rowid,
+  }) {
+    return SearchCacheEntriesCompanion(
+      query: query ?? this.query,
+      source: source ?? this.source,
+      resultsJson: resultsJson ?? this.resultsJson,
+      cachedAt: cachedAt ?? this.cachedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (query.present) {
+      map['query'] = Variable<String>(query.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(
+        $SearchCacheEntriesTable.$convertersource.toSql(source.value),
+      );
+    }
+    if (resultsJson.present) {
+      map['results_json'] = Variable<String>(resultsJson.value);
+    }
+    if (cachedAt.present) {
+      map['cached_at'] = Variable<DateTime>(cachedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SearchCacheEntriesCompanion(')
+          ..write('query: $query, ')
+          ..write('source: $source, ')
+          ..write('resultsJson: $resultsJson, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AnimeEntriesTable animeEntries = $AnimeEntriesTable(this);
+  late final $SearchCacheEntriesTable searchCacheEntries =
+      $SearchCacheEntriesTable(this);
   late final AnimeEntriesDao animeEntriesDao = AnimeEntriesDao(
+    this as AppDatabase,
+  );
+  late final SearchCacheDao searchCacheDao = SearchCacheDao(
     this as AppDatabase,
   );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [animeEntries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    animeEntries,
+    searchCacheEntries,
+  ];
 }
 
 typedef $$AnimeEntriesTableCreateCompanionBuilder =
@@ -957,6 +1340,7 @@ typedef $$AnimeEntriesTableCreateCompanionBuilder =
       Value<String?> synopsis,
       Value<String?> coverImageUrl,
       Value<int?> totalEpisodes,
+      Value<int> episodesWatched,
       required WatchStatus watchStatus,
       Value<double?> rating,
       Value<String?> notes,
@@ -977,6 +1361,7 @@ typedef $$AnimeEntriesTableUpdateCompanionBuilder =
       Value<String?> synopsis,
       Value<String?> coverImageUrl,
       Value<int?> totalEpisodes,
+      Value<int> episodesWatched,
       Value<WatchStatus> watchStatus,
       Value<double?> rating,
       Value<String?> notes,
@@ -1026,6 +1411,11 @@ class $$AnimeEntriesTableFilterComposer
 
   ColumnFilters<int> get totalEpisodes => $composableBuilder(
     column: $table.totalEpisodes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get episodesWatched => $composableBuilder(
+    column: $table.episodesWatched,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1121,6 +1511,11 @@ class $$AnimeEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get episodesWatched => $composableBuilder(
+    column: $table.episodesWatched,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get watchStatus => $composableBuilder(
     column: $table.watchStatus,
     builder: (column) => ColumnOrderings(column),
@@ -1205,6 +1600,11 @@ class $$AnimeEntriesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get episodesWatched => $composableBuilder(
+    column: $table.episodesWatched,
+    builder: (column) => column,
+  );
+
   GeneratedColumnWithTypeConverter<WatchStatus, String> get watchStatus =>
       $composableBuilder(
         column: $table.watchStatus,
@@ -1278,6 +1678,7 @@ class $$AnimeEntriesTableTableManager
                 Value<String?> synopsis = const Value.absent(),
                 Value<String?> coverImageUrl = const Value.absent(),
                 Value<int?> totalEpisodes = const Value.absent(),
+                Value<int> episodesWatched = const Value.absent(),
                 Value<WatchStatus> watchStatus = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -1296,6 +1697,7 @@ class $$AnimeEntriesTableTableManager
                 synopsis: synopsis,
                 coverImageUrl: coverImageUrl,
                 totalEpisodes: totalEpisodes,
+                episodesWatched: episodesWatched,
                 watchStatus: watchStatus,
                 rating: rating,
                 notes: notes,
@@ -1316,6 +1718,7 @@ class $$AnimeEntriesTableTableManager
                 Value<String?> synopsis = const Value.absent(),
                 Value<String?> coverImageUrl = const Value.absent(),
                 Value<int?> totalEpisodes = const Value.absent(),
+                Value<int> episodesWatched = const Value.absent(),
                 required WatchStatus watchStatus,
                 Value<double?> rating = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -1334,6 +1737,7 @@ class $$AnimeEntriesTableTableManager
                 synopsis: synopsis,
                 coverImageUrl: coverImageUrl,
                 totalEpisodes: totalEpisodes,
+                episodesWatched: episodesWatched,
                 watchStatus: watchStatus,
                 rating: rating,
                 notes: notes,
@@ -1371,12 +1775,211 @@ typedef $$AnimeEntriesTableProcessedTableManager =
       AnimeEntry,
       PrefetchHooks Function()
     >;
+typedef $$SearchCacheEntriesTableCreateCompanionBuilder =
+    SearchCacheEntriesCompanion Function({
+      required String query,
+      required AnimeSource source,
+      required String resultsJson,
+      required DateTime cachedAt,
+      Value<int> rowid,
+    });
+typedef $$SearchCacheEntriesTableUpdateCompanionBuilder =
+    SearchCacheEntriesCompanion Function({
+      Value<String> query,
+      Value<AnimeSource> source,
+      Value<String> resultsJson,
+      Value<DateTime> cachedAt,
+      Value<int> rowid,
+    });
+
+class $$SearchCacheEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $SearchCacheEntriesTable> {
+  $$SearchCacheEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get query => $composableBuilder(
+    column: $table.query,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<AnimeSource, AnimeSource, String> get source =>
+      $composableBuilder(
+        column: $table.source,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<String> get resultsJson => $composableBuilder(
+    column: $table.resultsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SearchCacheEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SearchCacheEntriesTable> {
+  $$SearchCacheEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get query => $composableBuilder(
+    column: $table.query,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get resultsJson => $composableBuilder(
+    column: $table.resultsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SearchCacheEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SearchCacheEntriesTable> {
+  $$SearchCacheEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get query =>
+      $composableBuilder(column: $table.query, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<AnimeSource, String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get resultsJson => $composableBuilder(
+    column: $table.resultsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get cachedAt =>
+      $composableBuilder(column: $table.cachedAt, builder: (column) => column);
+}
+
+class $$SearchCacheEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SearchCacheEntriesTable,
+          SearchCacheEntry,
+          $$SearchCacheEntriesTableFilterComposer,
+          $$SearchCacheEntriesTableOrderingComposer,
+          $$SearchCacheEntriesTableAnnotationComposer,
+          $$SearchCacheEntriesTableCreateCompanionBuilder,
+          $$SearchCacheEntriesTableUpdateCompanionBuilder,
+          (
+            SearchCacheEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $SearchCacheEntriesTable,
+              SearchCacheEntry
+            >,
+          ),
+          SearchCacheEntry,
+          PrefetchHooks Function()
+        > {
+  $$SearchCacheEntriesTableTableManager(
+    _$AppDatabase db,
+    $SearchCacheEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SearchCacheEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SearchCacheEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SearchCacheEntriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> query = const Value.absent(),
+                Value<AnimeSource> source = const Value.absent(),
+                Value<String> resultsJson = const Value.absent(),
+                Value<DateTime> cachedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SearchCacheEntriesCompanion(
+                query: query,
+                source: source,
+                resultsJson: resultsJson,
+                cachedAt: cachedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String query,
+                required AnimeSource source,
+                required String resultsJson,
+                required DateTime cachedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SearchCacheEntriesCompanion.insert(
+                query: query,
+                source: source,
+                resultsJson: resultsJson,
+                cachedAt: cachedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SearchCacheEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SearchCacheEntriesTable,
+      SearchCacheEntry,
+      $$SearchCacheEntriesTableFilterComposer,
+      $$SearchCacheEntriesTableOrderingComposer,
+      $$SearchCacheEntriesTableAnnotationComposer,
+      $$SearchCacheEntriesTableCreateCompanionBuilder,
+      $$SearchCacheEntriesTableUpdateCompanionBuilder,
+      (
+        SearchCacheEntry,
+        BaseReferences<
+          _$AppDatabase,
+          $SearchCacheEntriesTable,
+          SearchCacheEntry
+        >,
+      ),
+      SearchCacheEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$AnimeEntriesTableTableManager get animeEntries =>
       $$AnimeEntriesTableTableManager(_db, _db.animeEntries);
+  $$SearchCacheEntriesTableTableManager get searchCacheEntries =>
+      $$SearchCacheEntriesTableTableManager(_db, _db.searchCacheEntries);
 }
 
 mixin _$AnimeEntriesDaoMixin on DatabaseAccessor<AppDatabase> {
@@ -1389,4 +1992,20 @@ class AnimeEntriesDaoManager {
   AnimeEntriesDaoManager(this._db);
   $$AnimeEntriesTableTableManager get animeEntries =>
       $$AnimeEntriesTableTableManager(_db.attachedDatabase, _db.animeEntries);
+}
+
+mixin _$SearchCacheDaoMixin on DatabaseAccessor<AppDatabase> {
+  $SearchCacheEntriesTable get searchCacheEntries =>
+      attachedDatabase.searchCacheEntries;
+  SearchCacheDaoManager get managers => SearchCacheDaoManager(this);
+}
+
+class SearchCacheDaoManager {
+  final _$SearchCacheDaoMixin _db;
+  SearchCacheDaoManager(this._db);
+  $$SearchCacheEntriesTableTableManager get searchCacheEntries =>
+      $$SearchCacheEntriesTableTableManager(
+        _db.attachedDatabase,
+        _db.searchCacheEntries,
+      );
 }
