@@ -71,7 +71,7 @@ class AnimeListTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        color: CupertinoColors.systemBackground,
+        color: CupertinoColors.systemBackground.resolveFrom(context),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,9 +104,11 @@ class AnimeListTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       anime.titleJapanese!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: CupertinoColors.secondaryLabel,
+                        color: CupertinoColors.secondaryLabel.resolveFrom(
+                          context,
+                        ),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

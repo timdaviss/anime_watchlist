@@ -74,13 +74,15 @@ class LibraryScreen extends ConsumerWidget {
                   }
                   return ListView.separated(
                     itemCount: animeList.length,
-                    separatorBuilder: (context, index) => const Padding(
-                      padding: EdgeInsets.only(left: 92),
+                    separatorBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(left: 92),
                       child: SizedBox(
                         height: 1,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: CupertinoColors.separator,
+                            color: CupertinoColors.separator.resolveFrom(
+                              context,
+                            ),
                           ),
                         ),
                       ),
