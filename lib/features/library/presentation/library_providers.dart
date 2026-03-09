@@ -16,14 +16,25 @@ class SelectedStatus extends _$SelectedStatus {
 }
 
 @riverpod
+class LibrarySearchQuery extends _$LibrarySearchQuery {
+  @override
+  String build() => '';
+
+  void setQuery(String query) {
+    state = query;
+  }
+}
+
+@riverpod
 Stream<List<AnimeEntry>> animeList(Ref ref) {
   final repository = ref.watch(animeRepositoryProvider);
   final status = ref.watch(selectedStatusProvider);
+  final query = ref.watch(librarySearchQueryProvider).trim().toLowerCase();
 
   if (status == null) {
-    return repository.watchAll();
+    return repository.watchAllWithSearch(query);
   } else {
-    return repository.watchByStatus(status);
+    return repository.watchByStatusWithSearch(status, query);
   }
 }
 
