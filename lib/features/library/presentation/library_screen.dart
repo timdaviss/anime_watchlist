@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/providers/core_providers.dart';
 import '../../settings/presentation/settings_screen.dart';
@@ -12,6 +13,7 @@ import 'add_anime_screen.dart';
 import 'anime_detail_screen.dart';
 import 'export_import_screen.dart';
 import 'library_providers.dart';
+import 'share_providers.dart';
 import 'widgets/anime_list_tile.dart';
 import 'widgets/status_filter_bar.dart';
 
@@ -77,13 +79,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   ),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (context) => const ExportImportScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: () => _showShareExportOptions(context),
                     child: const Icon(CupertinoIcons.square_arrow_up),
                   ),
                   CupertinoButton(
@@ -226,6 +222,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             ),
             if (isSelecting)
               _BatchActionBar(
+                onShare: () => _shareSelected(animeListAsync),
                 onChangeStatus: _showStatusPicker,
                 onToggleFavorite: () => _toggleFavorites(animeListAsync),
                 onDelete: _deleteSelected,
@@ -399,6 +396,79 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     _clearSelection();
   }
 
+  void _showShareExportOptions(BuildContext context) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _shareList();
+            },
+            child: const Text('Share List'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(this.context).push(
+                CupertinoPageRoute(
+                  builder: (context) => const ExportImportScreen(),
+                ),
+              );
+            },
+            child: const Text('Export / Import JSON'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
+  void _shareList() {
+    final animeList = ref.read(animeListProvider).asData?.value;
+    if (animeList == null || animeList.isEmpty) {
+      return;
+    }
+    final shareService = ref.read(libraryShareServiceProvider);
+    final text = shareService.formatList(animeList);
+    final box = context.findRenderObject() as RenderBox?;
+    Share.share(
+      text,
+      sharePositionOrigin: box != null
+          ? box.localToGlobal(Offset.zero) & box.size
+          : Rect.zero,
+    );
+  }
+
+  void _shareSelected(AsyncValue<List<AnimeEntry>> animeListAsync) {
+    final selectedIds = ref.read(selectionModeProvider);
+    if (selectedIds.isEmpty) {
+      return;
+    }
+    final animeList = animeListAsync.asData?.value ?? const <AnimeEntry>[];
+    final selectedEntries = animeList
+        .where((entry) => selectedIds.contains(entry.id))
+        .toList();
+    if (selectedEntries.isEmpty) {
+      return;
+    }
+    final shareService = ref.read(libraryShareServiceProvider);
+    final text = shareService.formatList(selectedEntries);
+    final box = context.findRenderObject() as RenderBox?;
+    Share.share(
+      text,
+      sharePositionOrigin: box != null
+          ? box.localToGlobal(Offset.zero) & box.size
+          : Rect.zero,
+    );
+    _clearSelection();
+  }
+
   void _showSortPicker(BuildContext context) {
     final currentSort = ref.read(selectedSortProvider);
     showCupertinoModalPopup<void>(
@@ -436,11 +506,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
 class _BatchActionBar extends StatelessWidget {
   const _BatchActionBar({
+    required this.onShare,
     required this.onChangeStatus,
     required this.onToggleFavorite,
     required this.onDelete,
   });
 
+  final VoidCallback onShare;
   final VoidCallback onChangeStatus;
   final VoidCallback onToggleFavorite;
   final VoidCallback onDelete;
@@ -462,6 +534,17 @@ class _BatchActionBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: onShare,
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(CupertinoIcons.share, size: 24),
+                  Text('Share', style: TextStyle(fontSize: 11)),
+                ],
+              ),
+            ),
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: onChangeStatus,

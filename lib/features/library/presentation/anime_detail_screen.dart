@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/providers/core_providers.dart';
 import '../../../shared/utils/date_formatter.dart';
@@ -9,6 +10,7 @@ import '../../../shared/widgets/loading_indicator.dart';
 import '../domain/anime_entry.dart';
 import '../domain/watch_status.dart';
 import 'library_providers.dart';
+import 'share_providers.dart';
 import 'widgets/rating_widget.dart';
 
 class AnimeDetailScreen extends ConsumerStatefulWidget {
@@ -78,6 +80,19 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
           .read(animeRepositoryProvider)
           .updateEntry(anime.copyWith(notes: notes, updatedAt: DateTime.now()));
     }
+  }
+
+  void _shareAnime(AnimeEntry anime) {
+    final shareService = ref.read(libraryShareServiceProvider);
+    final text = shareService.formatRecommendation(anime);
+    final box = context.findRenderObject() as RenderBox?;
+    Share.share(
+      text,
+      subject: anime.title,
+      sharePositionOrigin: box != null
+          ? box.localToGlobal(Offset.zero) & box.size
+          : Rect.zero,
+    );
   }
 
   Future<void> _showStatusPicker(AnimeEntry anime) async {
@@ -154,10 +169,20 @@ class _AnimeDetailScreenState extends ConsumerState<AnimeDetailScreen> {
 
         return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
-            trailing: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: _focusNotesField,
-              child: const Text('Edit'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => _shareAnime(anime),
+                  child: const Icon(CupertinoIcons.share),
+                ),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: _focusNotesField,
+                  child: const Text('Edit'),
+                ),
+              ],
             ),
           ),
           child: SafeArea(
