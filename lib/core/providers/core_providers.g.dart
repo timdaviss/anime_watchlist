@@ -119,7 +119,7 @@ final class DatabaseProvider
         argument: null,
         retry: null,
         name: r'databaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -146,7 +146,7 @@ final class DatabaseProvider
   }
 }
 
-String _$databaseHash() => r'736ec0413882f2b3c90ba6c062461117c1ce1274';
+String _$databaseHash() => r'0fe56aaf5bde72ce9021e425b918c495557124c1';
 
 @ProviderFor(dio)
 final dioProvider = DioProvider._();
@@ -159,7 +159,7 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
         argument: null,
         retry: null,
         name: r'dioProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -186,7 +186,7 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioHash() => r'7f1da3a3c4b2989926ae73d29954fbffe9e170e3';
+String _$dioHash() => r'83749e681806774312b40a6c1a52eb5c1260a560';
 
 @ProviderFor(jikanApi)
 final jikanApiProvider = JikanApiProvider._();

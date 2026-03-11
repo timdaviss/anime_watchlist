@@ -27,14 +27,14 @@ SharedPreferences sharedPreferences(Ref ref) {
   throw UnimplementedError('Must be overridden in main()');
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 AppDatabase database(Ref ref) {
   final db = AppDatabase();
   ref.onDispose(db.close);
   return db;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Dio dio(Ref ref) {
   final client = createDioClient();
   ref.onDispose(() => client.close(force: true));
